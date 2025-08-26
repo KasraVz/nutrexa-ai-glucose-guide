@@ -10,9 +10,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { useAuth, UserProfile } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { User, Settings, Shield, Save } from 'lucide-react';
+import { User, Settings, Shield, Save, Check, ChevronsUpDown, X } from 'lucide-react';
 
 const profileSchema = z.object({
   age: z.coerce.number().min(1, 'Age must be at least 1').max(120, 'Age must be less than 120'),
@@ -37,6 +39,10 @@ const Profile = () => {
   const { user, updateProfile } = useAuth();
   const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
+  const [hasAllergies, setHasAllergies] = useState(user?.profile?.allergies?.length > 0 || false);
+  const [hasCulturalPreferences, setHasCulturalPreferences] = useState(user?.profile?.culturalPreferences?.length > 0 || false);
+  const [allergiesOpen, setAllergiesOpen] = useState(false);
+  const [culturalOpen, setCulturalOpen] = useState(false);
 
   const form = useForm<ProfileForm>({
     resolver: zodResolver(profileSchema),
@@ -228,8 +234,9 @@ const Profile = () => {
                   <div className="space-y-3">
                     <Label>Do you have any food allergies?</Label>
                     <Select 
-                      value={form.watch('allergies').length > 0 ? 'yes' : 'no'}
+                      value={hasAllergies ? 'yes' : 'no'}
                       onValueChange={(value) => {
+                        setHasAllergies(value === 'yes');
                         if (value === 'no') {
                           form.setValue('allergies', []);
                         }
@@ -245,28 +252,47 @@ const Profile = () => {
                       </SelectContent>
                     </Select>
                     
-                    {form.watch('allergies').length > 0 && (
+                    {hasAllergies && (
                       <div className="space-y-2">
                         <Label>Search and select allergies</Label>
                         <div className="space-y-2">
-                          <Select 
-                            onValueChange={(value) => {
-                              const current = form.getValues('allergies');
-                              if (!current.includes(value)) {
-                                form.setValue('allergies', [...current, value]);
-                              }
-                            }}
-                            disabled={!isEditing}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select an allergy to add" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {ALLERGIES.filter(allergy => !form.watch('allergies').includes(allergy)).map((allergy) => (
-                                <SelectItem key={allergy} value={allergy}>{allergy}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                          <Popover open={allergiesOpen} onOpenChange={setAllergiesOpen}>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                role="combobox"
+                                aria-expanded={allergiesOpen}
+                                className="w-full justify-between"
+                                disabled={!isEditing}
+                              >
+                                Search allergies...
+                                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-full p-0 z-50" style={{ zIndex: 9999 }}>
+                              <Command>
+                                <CommandInput placeholder="Search allergies..." />
+                                <CommandEmpty>No allergy found.</CommandEmpty>
+                                <CommandList>
+                                  <CommandGroup>
+                                    {ALLERGIES.filter(allergy => !form.watch('allergies').includes(allergy)).map((allergy) => (
+                                      <CommandItem
+                                        key={allergy}
+                                        onSelect={() => {
+                                          const current = form.getValues('allergies');
+                                          form.setValue('allergies', [...current, allergy]);
+                                          setAllergiesOpen(false);
+                                        }}
+                                      >
+                                        <Check className="mr-2 h-4 w-4 opacity-0" />
+                                        {allergy}
+                                      </CommandItem>
+                                    ))}
+                                  </CommandGroup>
+                                </CommandList>
+                              </Command>
+                            </PopoverContent>
+                          </Popover>
                           
                           {form.watch('allergies').length > 0 && (
                             <div className="flex flex-wrap gap-2">
@@ -278,11 +304,15 @@ const Profile = () => {
                                       type="button"
                                       onClick={() => {
                                         const current = form.getValues('allergies');
-                                        form.setValue('allergies', current.filter(a => a !== allergy));
+                                        const newAllergies = current.filter(a => a !== allergy);
+                                        form.setValue('allergies', newAllergies);
+                                        if (newAllergies.length === 0) {
+                                          setHasAllergies(false);
+                                        }
                                       }}
                                       className="ml-1 text-muted-foreground hover:text-foreground"
                                     >
-                                      ×
+                                      <X className="h-3 w-3" />
                                     </button>
                                   )}
                                 </div>
@@ -321,8 +351,9 @@ const Profile = () => {
                   <div className="space-y-3">
                     <Label>Do you have any cultural food preferences?</Label>
                     <Select 
-                      value={form.watch('culturalPreferences').length > 0 ? 'yes' : 'no'}
+                      value={hasCulturalPreferences ? 'yes' : 'no'}
                       onValueChange={(value) => {
+                        setHasCulturalPreferences(value === 'yes');
                         if (value === 'no') {
                           form.setValue('culturalPreferences', []);
                         }
@@ -338,28 +369,47 @@ const Profile = () => {
                       </SelectContent>
                     </Select>
                     
-                    {form.watch('culturalPreferences').length > 0 && (
+                    {hasCulturalPreferences && (
                       <div className="space-y-2">
                         <Label>Search and select cultural preferences</Label>
                         <div className="space-y-2">
-                          <Select 
-                            onValueChange={(value) => {
-                              const current = form.getValues('culturalPreferences');
-                              if (!current.includes(value)) {
-                                form.setValue('culturalPreferences', [...current, value]);
-                              }
-                            }}
-                            disabled={!isEditing}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select a cuisine to add" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {CULTURAL_PREFERENCES.filter(culture => !form.watch('culturalPreferences').includes(culture)).map((culture) => (
-                                <SelectItem key={culture} value={culture}>{culture}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                          <Popover open={culturalOpen} onOpenChange={setCulturalOpen}>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                role="combobox"
+                                aria-expanded={culturalOpen}
+                                className="w-full justify-between"
+                                disabled={!isEditing}
+                              >
+                                Search cultural preferences...
+                                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-full p-0 z-50" style={{ zIndex: 9999 }}>
+                              <Command>
+                                <CommandInput placeholder="Search cultural preferences..." />
+                                <CommandEmpty>No cultural preference found.</CommandEmpty>
+                                <CommandList>
+                                  <CommandGroup>
+                                    {CULTURAL_PREFERENCES.filter(culture => !form.watch('culturalPreferences').includes(culture)).map((culture) => (
+                                      <CommandItem
+                                        key={culture}
+                                        onSelect={() => {
+                                          const current = form.getValues('culturalPreferences');
+                                          form.setValue('culturalPreferences', [...current, culture]);
+                                          setCulturalOpen(false);
+                                        }}
+                                      >
+                                        <Check className="mr-2 h-4 w-4 opacity-0" />
+                                        {culture}
+                                      </CommandItem>
+                                    ))}
+                                  </CommandGroup>
+                                </CommandList>
+                              </Command>
+                            </PopoverContent>
+                          </Popover>
                           
                           {form.watch('culturalPreferences').length > 0 && (
                             <div className="flex flex-wrap gap-2">
@@ -371,11 +421,15 @@ const Profile = () => {
                                       type="button"
                                       onClick={() => {
                                         const current = form.getValues('culturalPreferences');
-                                        form.setValue('culturalPreferences', current.filter(c => c !== culture));
+                                        const newPreferences = current.filter(c => c !== culture);
+                                        form.setValue('culturalPreferences', newPreferences);
+                                        if (newPreferences.length === 0) {
+                                          setHasCulturalPreferences(false);
+                                        }
                                       }}
                                       className="ml-1 text-muted-foreground hover:text-foreground"
                                     >
-                                      ×
+                                      <X className="h-3 w-3" />
                                     </button>
                                   )}
                                 </div>
