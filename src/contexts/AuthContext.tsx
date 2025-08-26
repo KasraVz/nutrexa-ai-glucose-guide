@@ -17,6 +17,7 @@ export interface UserProfile {
   allergies: string[];
   tastePreferences: string[];
   culturalPreferences: string[];
+  medications: string[];
   isPublic: boolean;
 }
 
@@ -29,6 +30,8 @@ interface AuthContextType {
   updateProfile: (profile: UserProfile) => void;
   hasCompletedOnboarding: boolean;
   setHasCompletedOnboarding: (completed: boolean) => void;
+  justSignedUp: boolean;
+  setJustSignedUp: (signedUp: boolean) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -48,6 +51,7 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
+  const [justSignedUp, setJustSignedUp] = useState(false);
 
   const signIn = async (email: string, password: string) => {
     // Mock authentication - in real app this would call an API
@@ -73,11 +77,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
     
     setUser(mockUser);
+    setJustSignedUp(true);
   };
 
   const signOut = () => {
     setUser(null);
     setHasCompletedOnboarding(false);
+    setJustSignedUp(false);
   };
 
   const updateProfile = (profile: UserProfile) => {
@@ -95,6 +101,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     updateProfile,
     hasCompletedOnboarding,
     setHasCompletedOnboarding,
+    justSignedUp,
+    setJustSignedUp,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

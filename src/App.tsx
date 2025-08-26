@@ -29,13 +29,18 @@ const App = () => (
                 <Onboarding />
               </ProtectedRoute>
             } />
+            <Route path="/dashboard" element={
+              <ProtectedRoute>
+                <Index />
+              </ProtectedRoute>
+            } />
             <Route path="/" element={
-              <ProtectedRoute requireOnboarding>
+              <ProtectedRoute>
                 <Index />
               </ProtectedRoute>
             } />
             <Route path="/profile" element={
-              <ProtectedRoute requireOnboarding>
+              <ProtectedRoute>
                 <Profile />
               </ProtectedRoute>
             } />

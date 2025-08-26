@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -20,8 +20,9 @@ type SignInForm = z.infer<typeof signInSchema>;
 
 const SignIn = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn, isAuthenticated, hasCompletedOnboarding } = useAuth();
+  const { signIn, isAuthenticated } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const form = useForm<SignInForm>({
     resolver: zodResolver(signInSchema),
@@ -31,8 +32,9 @@ const SignIn = () => {
     },
   });
 
+  // Redirect if already authenticated
   if (isAuthenticated) {
-    return <Navigate to={hasCompletedOnboarding ? "/" : "/onboarding"} replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   const onSubmit = async (data: SignInForm) => {
@@ -43,6 +45,7 @@ const SignIn = () => {
         title: "Welcome back!",
         description: "You've successfully signed in.",
       });
+      navigate('/dashboard');
     } catch (error) {
       toast({
         title: "Sign in failed",

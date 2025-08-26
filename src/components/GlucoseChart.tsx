@@ -1,4 +1,6 @@
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, ReferenceArea } from 'recharts';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { AlertTriangle } from 'lucide-react';
 
 // Simulated glucose data for demo
 const generateGlucoseData = () => {
@@ -39,6 +41,17 @@ const GlucoseChart = ({ data, className = "" }: GlucoseChartProps) => {
   };
   
   const glucoseStatus = getGlucoseStatus(currentGlucose);
+  const isDangerZone = currentGlucose < 70 || currentGlucose > 180;
+
+  const getMealSuggestion = (level: number) => {
+    if (level < 70) {
+      return "Have 15g of fast-acting carbs (juice, glucose tablets, or 3-4 glucose gels).";
+    }
+    if (level > 180) {
+      return "Consider a low-carb meal with protein and vegetables. Stay hydrated and consult your doctor.";
+    }
+    return "";
+  };
 
   return (
     <div className={`bg-card rounded-xl p-6 shadow-sm border ${className}`}>
@@ -54,6 +67,37 @@ const GlucoseChart = ({ data, className = "" }: GlucoseChartProps) => {
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+            
+            {/* Safe zone (70-140) - Green */}
+            <ReferenceArea 
+              y1={70} 
+              y2={140} 
+              fill="hsl(var(--success))" 
+              fillOpacity={0.1}
+            />
+            
+            {/* Elevated zone (140-180) - Amber */}
+            <ReferenceArea 
+              y1={140} 
+              y2={180} 
+              fill="hsl(var(--warning))" 
+              fillOpacity={0.15}
+            />
+            
+            {/* Danger zones - Red */}
+            <ReferenceArea 
+              y1={60} 
+              y2={70} 
+              fill="hsl(var(--destructive))" 
+              fillOpacity={0.2}
+            />
+            <ReferenceArea 
+              y1={180} 
+              y2={200} 
+              fill="hsl(var(--destructive))" 
+              fillOpacity={0.2}
+            />
+            
             <XAxis 
               dataKey="time" 
               stroke="hsl(var(--muted-foreground))"
@@ -87,6 +131,15 @@ const GlucoseChart = ({ data, className = "" }: GlucoseChartProps) => {
           </LineChart>
         </ResponsiveContainer>
       </div>
+      
+      {isDangerZone && (
+        <Alert className="mt-4 border-destructive/50 text-destructive">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>
+            <strong>Warning:</strong> Your glucose level is in the danger zone. {getMealSuggestion(currentGlucose)}
+          </AlertDescription>
+        </Alert>
+      )}
       
       <div className="mt-4 flex justify-between text-sm text-muted-foreground">
         <span>Target: 70-140 mg/dL</span>

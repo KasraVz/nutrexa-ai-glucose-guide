@@ -38,6 +38,7 @@ const SignUp = () => {
     },
   });
 
+  // Redirect if already authenticated
   if (isAuthenticated) {
     return <Navigate to="/onboarding" replace />;
   }

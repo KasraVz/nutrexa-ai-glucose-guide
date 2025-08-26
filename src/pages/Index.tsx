@@ -7,7 +7,7 @@ import FoodLogger from "@/components/FoodLogger";
 import heroImage from "@/assets/nutrexa-hero.jpg";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Activity, Users, Trophy, Heart } from "lucide-react";
+import { Activity, Users, Trophy, Heart, ArrowLeft } from "lucide-react";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -80,6 +80,16 @@ const Index = () => {
       case "meals":
         return (
           <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button
+                variant="ghost"
+                onClick={() => setActiveTab("dashboard")}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Back to Dashboard
+              </Button>
+            </div>
             <h2 className="text-2xl font-bold text-foreground">Meal Planning</h2>
             <MealRecommendations />
             <FoodLogger />
@@ -89,6 +99,16 @@ const Index = () => {
       case "community":
         return (
           <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button
+                variant="ghost"
+                onClick={() => setActiveTab("dashboard")}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Back to Dashboard
+              </Button>
+            </div>
             <h2 className="text-2xl font-bold text-foreground">Community Recipes</h2>
             <Card>
               <CardContent className="p-8 text-center">
@@ -106,6 +126,16 @@ const Index = () => {
       case "profile":
         return (
           <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button
+                variant="ghost"
+                onClick={() => setActiveTab("dashboard")}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Back to Dashboard
+              </Button>
+            </div>
             <h2 className="text-2xl font-bold text-foreground">Your Profile</h2>
             <Card>
               <CardContent className="p-8 text-center">
