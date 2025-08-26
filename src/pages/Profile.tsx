@@ -226,27 +226,72 @@ const Profile = () => {
                   <h3 className="text-lg font-medium">Preferences</h3>
                   
                   <div className="space-y-3">
-                    <Label>Food Allergies</Label>
-                    <div className="grid grid-cols-3 gap-3">
-                      {ALLERGIES.map((allergy) => (
-                        <div key={allergy} className="flex items-center space-x-2">
-                          <Checkbox
-                            id={allergy}
-                            checked={form.watch('allergies').includes(allergy)}
-                            onCheckedChange={(checked) => {
+                    <Label>Do you have any food allergies?</Label>
+                    <Select 
+                      value={form.watch('allergies').length > 0 ? 'yes' : 'no'}
+                      onValueChange={(value) => {
+                        if (value === 'no') {
+                          form.setValue('allergies', []);
+                        }
+                      }}
+                      disabled={!isEditing}
+                    >
+                      <SelectTrigger className="w-32">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="no">No</SelectItem>
+                        <SelectItem value="yes">Yes</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    
+                    {form.watch('allergies').length > 0 && (
+                      <div className="space-y-2">
+                        <Label>Search and select allergies</Label>
+                        <div className="space-y-2">
+                          <Select 
+                            onValueChange={(value) => {
                               const current = form.getValues('allergies');
-                              if (checked) {
-                                form.setValue('allergies', [...current, allergy]);
-                              } else {
-                                form.setValue('allergies', current.filter(a => a !== allergy));
+                              if (!current.includes(value)) {
+                                form.setValue('allergies', [...current, value]);
                               }
                             }}
                             disabled={!isEditing}
-                          />
-                          <Label htmlFor={allergy} className="text-sm">{allergy}</Label>
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select an allergy to add" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {ALLERGIES.filter(allergy => !form.watch('allergies').includes(allergy)).map((allergy) => (
+                                <SelectItem key={allergy} value={allergy}>{allergy}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          
+                          {form.watch('allergies').length > 0 && (
+                            <div className="flex flex-wrap gap-2">
+                              {form.watch('allergies').map((allergy) => (
+                                <div key={allergy} className="flex items-center gap-1 bg-secondary px-2 py-1 rounded-md text-sm">
+                                  <span>{allergy}</span>
+                                  {isEditing && (
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const current = form.getValues('allergies');
+                                        form.setValue('allergies', current.filter(a => a !== allergy));
+                                      }}
+                                      className="ml-1 text-muted-foreground hover:text-foreground"
+                                    >
+                                      ×
+                                    </button>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          )}
                         </div>
-                      ))}
-                    </div>
+                      </div>
+                    )}
                   </div>
 
                   <div className="space-y-3">
@@ -274,27 +319,72 @@ const Profile = () => {
                   </div>
 
                   <div className="space-y-3">
-                    <Label>Cultural Preferences</Label>
-                    <div className="grid grid-cols-3 gap-3">
-                      {CULTURAL_PREFERENCES.map((culture) => (
-                        <div key={culture} className="flex items-center space-x-2">
-                          <Checkbox
-                            id={culture}
-                            checked={form.watch('culturalPreferences').includes(culture)}
-                            onCheckedChange={(checked) => {
+                    <Label>Do you have any cultural food preferences?</Label>
+                    <Select 
+                      value={form.watch('culturalPreferences').length > 0 ? 'yes' : 'no'}
+                      onValueChange={(value) => {
+                        if (value === 'no') {
+                          form.setValue('culturalPreferences', []);
+                        }
+                      }}
+                      disabled={!isEditing}
+                    >
+                      <SelectTrigger className="w-32">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="no">No</SelectItem>
+                        <SelectItem value="yes">Yes</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    
+                    {form.watch('culturalPreferences').length > 0 && (
+                      <div className="space-y-2">
+                        <Label>Search and select cultural preferences</Label>
+                        <div className="space-y-2">
+                          <Select 
+                            onValueChange={(value) => {
                               const current = form.getValues('culturalPreferences');
-                              if (checked) {
-                                form.setValue('culturalPreferences', [...current, culture]);
-                              } else {
-                                form.setValue('culturalPreferences', current.filter(c => c !== culture));
+                              if (!current.includes(value)) {
+                                form.setValue('culturalPreferences', [...current, value]);
                               }
                             }}
                             disabled={!isEditing}
-                          />
-                          <Label htmlFor={culture} className="text-sm">{culture}</Label>
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a cuisine to add" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {CULTURAL_PREFERENCES.filter(culture => !form.watch('culturalPreferences').includes(culture)).map((culture) => (
+                                <SelectItem key={culture} value={culture}>{culture}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          
+                          {form.watch('culturalPreferences').length > 0 && (
+                            <div className="flex flex-wrap gap-2">
+                              {form.watch('culturalPreferences').map((culture) => (
+                                <div key={culture} className="flex items-center gap-1 bg-secondary px-2 py-1 rounded-md text-sm">
+                                  <span>{culture}</span>
+                                  {isEditing && (
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const current = form.getValues('culturalPreferences');
+                                        form.setValue('culturalPreferences', current.filter(c => c !== culture));
+                                      }}
+                                      className="ml-1 text-muted-foreground hover:text-foreground"
+                                    >
+                                      ×
+                                    </button>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          )}
                         </div>
-                      ))}
-                    </div>
+                      </div>
+                    )}
                   </div>
                 </div>
 
