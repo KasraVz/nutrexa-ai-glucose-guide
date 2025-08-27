@@ -9,13 +9,97 @@ import Achievements from "@/components/Achievements";
 import heroImage from "@/assets/nutrexa-hero.jpg";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Activity, Users, Trophy, Heart, ArrowLeft, Calendar } from "lucide-react";
+import { Activity, Users, Trophy, Heart, ArrowLeft, Calendar, Loader2, Sparkles } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { notifications } from "@/lib/notifications";
 import { Link } from "react-router-dom";
 
+// Import all meals from MealRecommendations
+const allMeals = [
+  {
+    id: 1,
+    name: "Grilled Salmon with Quinoa",
+    culture: "Mediterranean",
+    glucoseImpact: "low",
+    prepTime: "25 min",
+    calories: 420,
+    protein: 32,
+    carbs: 28,
+    fiber: 6,
+    description: "Omega-3 rich salmon with fiber-packed quinoa and roasted vegetables",
+    compatibility: 95,
+  },
+  {
+    id: 2,
+    name: "Chicken Tikka with Cauliflower Rice",
+    culture: "Indian",
+    glucoseImpact: "low",
+    prepTime: "30 min",
+    calories: 380,
+    protein: 35,
+    carbs: 15,
+    fiber: 8,
+    description: "Protein-rich chicken in aromatic spices with low-carb cauliflower rice",
+    compatibility: 92,
+  },
+  {
+    id: 3,
+    name: "Asian Lettuce Wraps with Tofu",
+    culture: "Asian",
+    glucoseImpact: "very low",
+    prepTime: "20 min",
+    calories: 290,
+    protein: 18,
+    carbs: 12,
+    fiber: 5,
+    description: "Fresh, crispy lettuce wraps with seasoned tofu and vegetables",
+    compatibility: 89,
+  },
+  {
+    id: 4,
+    name: "Greek Yogurt Parfait",
+    culture: "Mediterranean",
+    glucoseImpact: "very low",
+    prepTime: "5 min",
+    calories: 220,
+    protein: 20,
+    carbs: 18,
+    fiber: 4,
+    description: "Protein-rich Greek yogurt with berries and nuts",
+    compatibility: 88,
+  },
+  {
+    id: 5,
+    name: "Zucchini Noodles with Pesto",
+    culture: "Italian",
+    glucoseImpact: "very low",
+    prepTime: "15 min",
+    calories: 280,
+    protein: 12,
+    carbs: 8,
+    fiber: 6,
+    description: "Low-carb zucchini noodles with fresh basil pesto",
+    compatibility: 91,
+  },
+  {
+    id: 6,
+    name: "Turkey and Avocado Wrap",
+    culture: "American",
+    glucoseImpact: "moderate",
+    prepTime: "10 min",
+    calories: 380,
+    protein: 28,
+    carbs: 32,
+    fiber: 8,
+    description: "Whole grain wrap with lean turkey and fresh avocado",
+    compatibility: 85,
+  }
+];
+
 const Index = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
+  const [generatedMeals, setGeneratedMeals] = useState<typeof allMeals | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
   const { user } = useAuth();
   
   // Demo notification on mount
@@ -26,6 +110,41 @@ const Index = () => {
     
     return () => clearTimeout(timer);
   }, []);
+
+  const generateAIMealPlan = () => {
+    setIsGenerating(true);
+    
+    // Simulate AI processing
+    setTimeout(() => {
+      // Mock current glucose level - in real app, get from GlucoseChart component
+      const currentGlucose = 120; // Example glucose level
+      
+      let preferredMeals;
+      if (currentGlucose > 140) {
+        // High glucose - prioritize very low and low impact meals
+        preferredMeals = allMeals.filter(meal => 
+          meal.glucoseImpact === 'very low' || meal.glucoseImpact === 'low'
+        );
+      } else if (currentGlucose > 100) {
+        // Elevated - mix of low and very low impact
+        preferredMeals = allMeals.filter(meal => 
+          meal.glucoseImpact === 'very low' || meal.glucoseImpact === 'low'
+        );
+      } else {
+        // Normal - can include moderate impact
+        preferredMeals = allMeals;
+      }
+      
+      // Select 3-4 random meals from preferred list
+      const shuffled = [...preferredMeals].sort(() => 0.5 - Math.random());
+      const selected = shuffled.slice(0, Math.min(4, shuffled.length));
+      
+      setGeneratedMeals(selected);
+      setIsGenerating(false);
+      
+      notifications.achievement('AI Plan Generated!', 'Your personalized meal plan is ready based on your current glucose levels.');
+    }, 2000);
+  };
 
   const renderContent = () => {
     switch (activeTab) {
@@ -50,8 +169,24 @@ const Index = () => {
                 <div className="mb-6">
                   <HealthSummary userName={user?.name || 'John'} />
                 </div>
-                <Button variant="secondary" size="lg" asChild>
-                  <Link to="/my-plan">View Today's Plan</Link>
+                <Button 
+                  variant="secondary" 
+                  size="lg" 
+                  onClick={generateAIMealPlan}
+                  disabled={isGenerating}
+                  className="flex items-center gap-2"
+                >
+                  {isGenerating ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Generating AI Plan...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="h-4 w-4" />
+                      Generate AI Plan for Today
+                    </>
+                  )}
                 </Button>
               </div>
             </div>
@@ -61,10 +196,10 @@ const Index = () => {
 
             {/* Main Content Grid */}
             <div className="grid lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2">
-                <GlucoseChart className="mb-6" />
-                <MealRecommendations />
-              </div>
+            <div className="lg:col-span-2">
+              <GlucoseChart className="mb-6" />
+              <MealRecommendations meals={generatedMeals} />
+            </div>
               
               <div className="space-y-6">
                 <FoodLogger />

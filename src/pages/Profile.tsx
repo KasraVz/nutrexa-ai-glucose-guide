@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -14,7 +15,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { useAuth, UserProfile } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { User, Settings, Shield, Save, Check, ChevronsUpDown, X } from 'lucide-react';
+import { User, Settings, Shield, Save, Check, ChevronsUpDown, X, ArrowLeft } from 'lucide-react';
 
 const profileSchema = z.object({
   age: z.coerce.number().min(1, 'Age must be at least 1').max(120, 'Age must be less than 120'),
@@ -38,6 +39,7 @@ const CULTURAL_PREFERENCES = ['Mediterranean', 'Asian', 'Mexican', 'Indian', 'It
 const Profile = () => {
   const { user, updateProfile } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [hasAllergies, setHasAllergies] = useState(user?.profile?.allergies?.length > 0 || false);
   const [hasCulturalPreferences, setHasCulturalPreferences] = useState(user?.profile?.culturalPreferences?.length > 0 || false);
@@ -80,6 +82,18 @@ const Profile = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
+        {/* Back Button */}
+        <div className="mb-6">
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/dashboard')}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Dashboard
+          </Button>
+        </div>
+        
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
             <User className="h-8 w-8 text-primary" />

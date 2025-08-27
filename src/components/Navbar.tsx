@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/AuthContext";
 import { 
   Activity, 
@@ -99,28 +100,31 @@ const Navbar = ({ activeTab = "dashboard", onTabChange }: NavbarProps) => {
 
             {/* User Menu */}
             <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleProfileClick}
-                className="hidden md:flex"
-              >
-                Profile
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleSignOut}
-                className="text-muted-foreground hover:text-foreground"
-              >
-                <LogOut className="h-4 w-4" />
-              </Button>
-              <Avatar className="h-8 w-8 cursor-pointer" onClick={handleProfileClick}>
-                <AvatarImage src="/placeholder-avatar.jpg" alt={user?.name} />
-                <AvatarFallback className="bg-primary text-primary-foreground text-sm">
-                  {user?.name?.charAt(0).toUpperCase() || 'U'}
-                </AvatarFallback>
-              </Avatar>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Avatar className="h-8 w-8 cursor-pointer">
+                    <AvatarImage src="/placeholder-avatar.jpg" alt={user?.name} />
+                    <AvatarFallback className="bg-primary text-primary-foreground text-sm">
+                      {user?.name?.charAt(0).toUpperCase() || 'U'}
+                    </AvatarFallback>
+                  </Avatar>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem onClick={handleProfileClick}>
+                    <Settings className="mr-2 h-4 w-4" />
+                    View Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/summary')}>
+                    <Activity className="mr-2 h-4 w-4" />
+                    View Summary
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
 
             {/* Mobile Menu */}

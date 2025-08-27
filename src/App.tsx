@@ -11,6 +11,7 @@ import SignUp from "./pages/SignUp";
 import OnboardingMultiStep from "./pages/OnboardingMultiStep";
 import MyPlan from "./pages/MyPlan";
 import Profile from "./pages/Profile";
+import Summary from "./pages/Summary";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,11 @@ const App = () => (
             <Route path="/onboarding" element={
               <ProtectedRoute>
                 <OnboardingMultiStep />
+              </ProtectedRoute>
+            } />
+            <Route path="/summary" element={
+              <ProtectedRoute>
+                <Summary />
               </ProtectedRoute>
             } />
             <Route path="/dashboard" element={

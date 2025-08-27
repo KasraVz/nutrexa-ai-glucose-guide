@@ -1,8 +1,12 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, ReferenceArea } from 'recharts';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { AlertTriangle, Calendar, BarChart3, TrendingUp } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { AlertTriangle, Calendar as CalendarIcon, BarChart3, TrendingUp, Download, CalendarDays } from 'lucide-react';
 import { useState } from 'react';
+import { format, addDays, subDays } from 'date-fns';
+import { cn } from '@/lib/utils';
 
 // Simulated glucose data for demo
 const generateGlucoseData = (timeframe: 'weekly' | 'monthly' | 'yearly' = 'weekly') => {
@@ -76,6 +80,9 @@ interface GlucoseChartProps {
 
 const GlucoseChart = ({ data, className = "" }: GlucoseChartProps) => {
   const [timeframe, setTimeframe] = useState<'weekly' | 'monthly' | 'yearly'>('weekly');
+  const [customDateRange, setCustomDateRange] = useState<{ from?: Date; to?: Date }>({});
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  
   const chartData = data || generateGlucoseData(timeframe);
   const currentGlucose = chartData[chartData.length - 1]?.glucose || 95;
   
@@ -100,16 +107,76 @@ const GlucoseChart = ({ data, className = "" }: GlucoseChartProps) => {
   };
 
   const timeframeOptions = [
-    { value: 'weekly' as const, label: 'Weekly', icon: Calendar },
+    { value: 'weekly' as const, label: 'Weekly', icon: CalendarIcon },
     { value: 'monthly' as const, label: 'Monthly', icon: BarChart3 },
     { value: 'yearly' as const, label: 'Yearly', icon: TrendingUp },
   ];
+
+  const handleExportData = () => {
+    // Placeholder for export functionality
+    const csvContent = [
+      ['Time', 'Glucose (mg/dL)'],
+      ...chartData.map(row => [row.time, row.glucose])
+    ].map(row => row.join(',')).join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `glucose-data-${format(new Date(), 'yyyy-MM-dd')}.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
+
+  const handleDateRangeSelect = (range: { from?: Date; to?: Date }) => {
+    setCustomDateRange(range);
+    if (range.from && range.to) {
+      setShowDatePicker(false);
+      // In a real app, you'd fetch data for this date range
+      // For demo, we'll just close the picker
+    }
+  };
 
   return (
     <div className={`bg-card rounded-xl p-6 shadow-sm border ${className}`}>
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-semibold text-card-foreground">Glucose Levels</h3>
         <div className="flex items-center gap-3">
+          {/* Export Button */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExportData}
+            className="flex items-center gap-2"
+          >
+            <Download className="h-3 w-3" />
+            Export
+          </Button>
+          
+          {/* Date Range Picker */}
+          <Popover open={showDatePicker} onOpenChange={setShowDatePicker}>
+            <PopoverTrigger asChild>
+              <Button variant="outline" size="sm" className="flex items-center gap-2">
+                <CalendarDays className="h-3 w-3" />
+                {customDateRange.from && customDateRange.to
+                  ? `${format(customDateRange.from, 'MMM dd')} - ${format(customDateRange.to, 'MMM dd')}`
+                  : 'Custom Range'
+                }
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="end">
+              <Calendar
+                initialFocus
+                mode="range"
+                defaultMonth={customDateRange.from}
+                selected={{ from: customDateRange.from, to: customDateRange.to }}
+                onSelect={handleDateRangeSelect}
+                numberOfMonths={2}
+                className={cn("p-3 pointer-events-auto")}
+              />
+            </PopoverContent>
+          </Popover>
+          
           {/* Timeframe Selector */}
           <div className="flex items-center bg-muted rounded-lg p-1">
             {timeframeOptions.map((option) => {

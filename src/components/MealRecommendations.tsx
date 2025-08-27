@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Clock, Users, TrendingDown, Heart, ChefHat } from "lucide-react";
 
-const sampleMeals = [
+const allMeals = [
   {
     id: 1,
     name: "Grilled Salmon with Quinoa",
@@ -42,6 +42,45 @@ const sampleMeals = [
     fiber: 5,
     description: "Fresh, crispy lettuce wraps with seasoned tofu and vegetables",
     compatibility: 89,
+  },
+  {
+    id: 4,
+    name: "Greek Yogurt Parfait",
+    culture: "Mediterranean",
+    glucoseImpact: "very low",
+    prepTime: "5 min",
+    calories: 220,
+    protein: 20,
+    carbs: 18,
+    fiber: 4,
+    description: "Protein-rich Greek yogurt with berries and nuts",
+    compatibility: 88,
+  },
+  {
+    id: 5,
+    name: "Zucchini Noodles with Pesto",
+    culture: "Italian",
+    glucoseImpact: "very low",
+    prepTime: "15 min",
+    calories: 280,
+    protein: 12,
+    carbs: 8,
+    fiber: 6,
+    description: "Low-carb zucchini noodles with fresh basil pesto",
+    compatibility: 91,
+  },
+  {
+    id: 6,
+    name: "Turkey and Avocado Wrap",
+    culture: "American",
+    glucoseImpact: "moderate",
+    prepTime: "10 min",
+    calories: 380,
+    protein: 28,
+    carbs: 32,
+    fiber: 8,
+    description: "Whole grain wrap with lean turkey and fresh avocado",
+    compatibility: 85,
   }
 ];
 
@@ -57,9 +96,11 @@ const getGlucoseImpactColor = (impact: string) => {
 
 interface MealRecommendationsProps {
   className?: string;
+  meals?: typeof allMeals;
 }
 
-const MealRecommendations = ({ className = "" }: MealRecommendationsProps) => {
+const MealRecommendations = ({ className = "", meals }: MealRecommendationsProps) => {
+  const displayMeals = meals || allMeals.slice(0, 3);
   return (
     <div className={className}>
       <div className="flex items-center justify-between mb-6">
@@ -73,7 +114,7 @@ const MealRecommendations = ({ className = "" }: MealRecommendationsProps) => {
       </div>
       
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {sampleMeals.map((meal) => (
+        {displayMeals.map((meal) => (
           <Card key={meal.id} className="hover:shadow-md transition-shadow">
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between">
