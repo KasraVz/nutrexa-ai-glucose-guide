@@ -1,10 +1,18 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
+export interface Achievement {
+  title: string;
+  badge: 'gold' | 'silver' | 'bronze';
+  icon: 'trophy' | 'star' | 'target' | 'flame';
+  description: string;
+}
+
 export interface User {
   id: string;
   email: string;
   name: string;
   profile?: UserProfile;
+  achievements?: Achievement[];
 }
 
 export interface UserProfile {
@@ -61,6 +69,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       id: '1',
       email,
       name: email.split('@')[0],
+      achievements: [
+        {
+          title: '7-Day Streak',
+          badge: 'gold',
+          icon: 'flame',
+          description: 'Maintained stable blood sugar for 7 days'
+        },
+        {
+          title: 'Healthy Meals',
+          badge: 'silver',
+          icon: 'target',
+          description: 'Logged 50 nutritious meals'
+        }
+      ]
     };
     
     setUser(mockUser);
@@ -74,6 +96,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       id: '1',
       email,
       name,
+      achievements: []
     };
     
     setUser(mockUser);

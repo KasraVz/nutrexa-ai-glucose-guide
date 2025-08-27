@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Heart } from 'lucide-react';
+import { Loader2, Heart, Shield } from 'lucide-react';
 
 const signInSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -109,6 +109,10 @@ const SignIn = () => {
           </form>
           
           <div className="mt-6 text-center">
+            <div className="flex items-center justify-center gap-2 mb-3 text-sm text-muted-foreground">
+              <Shield className="h-4 w-4" />
+              <span>Your health data is encrypted and secure.</span>
+            </div>
             <p className="text-sm text-muted-foreground">
               Don't have an account?{' '}
               <Link to="/signup" className="text-primary hover:underline">

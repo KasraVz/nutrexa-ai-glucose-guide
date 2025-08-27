@@ -8,7 +8,7 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Nutrexa Health-focused Design System */
+    /* Nutrexa Luxurious & Trustworthy Design System */
     --background: 210 20% 98%;
     --foreground: 215 25% 27%;
 
@@ -18,20 +18,24 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 215 25% 27%;
 
-    /* Medical Trust Colors */
-    --primary: 195 100% 39%; /* Medical teal */
-    --primary-foreground: 0 0% 100%;
-    --primary-glow: 195 85% 65%;
+    /* Scientific Trust Colors - Dark Navy Blue */
+    --primary: 220 40% 15%; /* Dark navy blue */
+    --primary-foreground: 45 100% 95%; /* Light gold */
+    --primary-glow: 220 35% 25%;
 
-    /* Warm Accent Colors */
+    /* Luxury Gold Accent */
+    --accent-gold: 45 85% 60%; /* Luxury gold */
+    --accent-gold-foreground: 220 40% 15%;
+
+    /* Clean Background Colors */
     --secondary: 210 17% 95%;
     --secondary-foreground: 215 25% 27%;
 
     --muted: 210 17% 95%;
     --muted-foreground: 215 13% 54%;
 
-    --accent: 14 85% 66%; /* Warm coral */
-    --accent-foreground: 0 0% 100%;
+    --accent: 45 85% 60%; /* Use gold as main accent */
+    --accent-foreground: 220 40% 15%;
 
     /* Health Status Colors */
     --success: 142 71% 45%; /* Healthy green */

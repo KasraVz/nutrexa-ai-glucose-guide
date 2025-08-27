@@ -1,16 +1,31 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import GlucoseChart from "@/components/GlucoseChart";
 import QuickStats from "@/components/QuickStats";
 import MealRecommendations from "@/components/MealRecommendations";
 import FoodLogger from "@/components/FoodLogger";
+import HealthSummary from "@/components/HealthSummary";
+import Achievements from "@/components/Achievements";
 import heroImage from "@/assets/nutrexa-hero.jpg";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Activity, Users, Trophy, Heart, ArrowLeft } from "lucide-react";
+import { Activity, Users, Trophy, Heart, ArrowLeft, Calendar } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { notifications } from "@/lib/notifications";
+import { Link } from "react-router-dom";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
+  const { user } = useAuth();
+  
+  // Demo notification on mount
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      notifications.mealReminder('lunch', 'A chicken salad would be a great choice to keep your energy stable.');
+    }, 3000);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   const renderContent = () => {
     switch (activeTab) {
@@ -28,13 +43,15 @@ const Index = () => {
               </div>
               <div className="relative p-8 text-primary-foreground">
                 <h1 className="text-3xl md:text-4xl font-bold mb-4">
-                  Welcome back, John! 👋
+                  Welcome back, {user?.name || 'John'}! 👋
                 </h1>
-                <p className="text-lg opacity-90 mb-6">
-                  Your glucose is stable today. Here are your personalized meal recommendations.
-                </p>
-                <Button variant="secondary" size="lg">
-                  View Today's Plan
+                
+                {/* Dynamic Health Summary */}
+                <div className="mb-6">
+                  <HealthSummary userName={user?.name || 'John'} />
+                </div>
+                <Button variant="secondary" size="lg" asChild>
+                  <Link to="/my-plan">View Today's Plan</Link>
                 </Button>
               </div>
             </div>
@@ -52,6 +69,11 @@ const Index = () => {
               <div className="space-y-6">
                 <FoodLogger />
                 
+                {/* Achievements */}
+                {user?.achievements && (
+                  <Achievements achievements={user.achievements} />
+                )}
+                
                 {/* Quick Actions */}
                 <Card>
                   <CardHeader>
@@ -66,9 +88,11 @@ const Index = () => {
                       <Heart className="h-4 w-4 mr-2" />
                       Update Health Profile
                     </Button>
-                    <Button variant="outline" className="w-full justify-start">
-                      <Trophy className="h-4 w-4 mr-2" />
-                      View Achievements
+                    <Button variant="outline" className="w-full justify-start" asChild>
+                      <Link to="/my-plan">
+                        <Calendar className="h-4 w-4 mr-2" />
+                        My Diet Plan
+                      </Link>
                     </Button>
                   </CardContent>
                 </Card>
