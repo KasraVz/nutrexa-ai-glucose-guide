@@ -40,7 +40,7 @@ const SignUp = () => {
 
   // Redirect if already authenticated
   if (isAuthenticated) {
-    return <Navigate to="/onboarding" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   const onSubmit = async (data: SignUpForm) => {
