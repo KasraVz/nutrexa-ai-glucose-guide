@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Input } from "@/components/ui/input";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useAuth } from "@/contexts/AuthContext";
 import { 
   Activity, 
@@ -14,7 +16,8 @@ import {
   Search,
   Menu,
   LogOut,
-  Heart
+  Heart,
+  X
 } from "lucide-react";
 
 interface NavbarProps {
@@ -25,6 +28,8 @@ interface NavbarProps {
 const Navbar = ({ activeTab = "dashboard", onTabChange }: NavbarProps) => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   
   const tabs = [
     { id: "dashboard", label: "Dashboard", icon: Activity },
@@ -41,6 +46,29 @@ const Navbar = ({ activeTab = "dashboard", onTabChange }: NavbarProps) => {
   const handleProfileClick = () => {
     navigate('/profile');
   };
+
+  const handleSearch = () => {
+    setIsSearchOpen(true);
+  };
+
+  const performSearch = () => {
+    if (searchQuery.trim()) {
+      // For now, navigate to meals page with search context
+      onTabChange?.('meals');
+      setIsSearchOpen(false);
+      setSearchQuery("");
+    }
+  };
+
+  const searchResults = [
+    { id: 1, name: "Grilled Salmon with Quinoa", type: "meal" },
+    { id: 2, name: "Chicken Tikka", type: "meal" },
+    { id: 3, name: "Greek Yogurt Parfait", type: "meal" },
+    { id: 4, name: "Glucose Chart", type: "feature" },
+    { id: 5, name: "My Plan", type: "feature" }
+  ].filter(item => 
+    item.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <nav className="bg-card border-b border-border">
@@ -84,7 +112,7 @@ const Navbar = ({ activeTab = "dashboard", onTabChange }: NavbarProps) => {
 
           {/* Right Side Actions */}
           <div className="flex items-center space-x-3">
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" onClick={handleSearch}>
               <Search className="h-4 w-4" />
             </Button>
             
@@ -161,6 +189,83 @@ const Navbar = ({ activeTab = "dashboard", onTabChange }: NavbarProps) => {
           </div>
         </div>
       </div>
+
+      {/* Search Modal */}
+      <Dialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Search className="h-5 w-5" />
+              Search Nutrexa
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="relative">
+              <Input
+                placeholder="Search for meals, features, or pages..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && performSearch()}
+                className="pr-10"
+                autoFocus
+              />
+              {searchQuery && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 h-6 w-6 p-0"
+                  onClick={() => setSearchQuery("")}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+            
+            {searchQuery && (
+              <div className="max-h-48 overflow-y-auto">
+                <div className="text-sm font-medium text-muted-foreground mb-2">
+                  Search Results
+                </div>
+                {searchResults.length > 0 ? (
+                  <div className="space-y-1">
+                    {searchResults.map((result) => (
+                      <button
+                        key={result.id}
+                        className="w-full text-left p-2 rounded-md hover:bg-muted flex items-center gap-2"
+                        onClick={() => {
+                          if (result.type === 'meal') {
+                            onTabChange?.('meals');
+                          } else if (result.name === 'My Plan') {
+                            navigate('/my-plan');
+                          } else {
+                            onTabChange?.('dashboard');
+                          }
+                          setIsSearchOpen(false);
+                          setSearchQuery("");
+                        }}
+                      >
+                        {result.type === 'meal' ? (
+                          <ChefHat className="h-4 w-4 text-primary" />
+                        ) : (
+                          <Activity className="h-4 w-4 text-primary" />
+                        )}
+                        <span>{result.name}</span>
+                        <Badge variant="secondary" className="ml-auto text-xs">
+                          {result.type}
+                        </Badge>
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-sm text-muted-foreground p-2">
+                    No results found for "{searchQuery}"
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </nav>
   );
 };
