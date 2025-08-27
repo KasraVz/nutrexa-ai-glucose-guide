@@ -1,21 +1,66 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, ReferenceArea } from 'recharts';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertTriangle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { AlertTriangle, Calendar, BarChart3, TrendingUp } from 'lucide-react';
+import { useState } from 'react';
 
 // Simulated glucose data for demo
-const generateGlucoseData = () => {
+const generateGlucoseData = (timeframe: 'weekly' | 'monthly' | 'yearly' = 'weekly') => {
   const now = new Date();
   const data = [];
   
-  for (let i = 23; i >= 0; i--) {
-    const time = new Date(now.getTime() - i * 60 * 60 * 1000);
-    // Simulate realistic glucose fluctuations (70-180 mg/dL range)
-    const baseLevel = 95 + Math.sin(i * 0.3) * 20;
-    const mealSpikes = i === 6 || i === 12 || i === 18 ? Math.random() * 40 : 0;
-    const glucose = Math.max(70, Math.min(200, baseLevel + mealSpikes + (Math.random() - 0.5) * 10));
+  let dataPoints: number;
+  let intervalHours: number;
+  let formatTime: (date: Date) => string;
+  
+  switch (timeframe) {
+    case 'weekly':
+      dataPoints = 24; // 24 hours
+      intervalHours = 1;
+      formatTime = (date) => date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      break;
+    case 'monthly':
+      dataPoints = 30; // 30 days
+      intervalHours = 24;
+      formatTime = (date) => date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+      break;
+    case 'yearly':
+      dataPoints = 12; // 12 months
+      intervalHours = 24 * 30; // Approximate month
+      formatTime = (date) => date.toLocaleDateString([], { month: 'short', year: '2-digit' });
+      break;
+    default:
+      dataPoints = 24;
+      intervalHours = 1;
+      formatTime = (date) => date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
+  
+  for (let i = dataPoints - 1; i >= 0; i--) {
+    const time = new Date(now.getTime() - i * intervalHours * 60 * 60 * 1000);
+    
+    // Generate more realistic patterns based on timeframe
+    let baseLevel: number;
+    let variation: number;
+    
+    if (timeframe === 'weekly') {
+      // Hourly data with meal spikes
+      baseLevel = 95 + Math.sin(i * 0.3) * 20;
+      const mealSpikes = i === 6 || i === 12 || i === 18 ? Math.random() * 40 : 0;
+      variation = mealSpikes + (Math.random() - 0.5) * 10;
+    } else if (timeframe === 'monthly') {
+      // Daily averages with weekly patterns
+      baseLevel = 100 + Math.sin(i * 0.2) * 15 + Math.cos(i * 0.1) * 10;
+      variation = (Math.random() - 0.5) * 20;
+    } else {
+      // Monthly averages with seasonal trends
+      baseLevel = 105 + Math.sin(i * 0.5) * 25;
+      variation = (Math.random() - 0.5) * 15;
+    }
+    
+    const glucose = Math.max(70, Math.min(200, baseLevel + variation));
     
     data.push({
-      time: time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      time: formatTime(time),
       glucose: Math.round(glucose),
       timestamp: time.getTime()
     });
@@ -30,7 +75,8 @@ interface GlucoseChartProps {
 }
 
 const GlucoseChart = ({ data, className = "" }: GlucoseChartProps) => {
-  const chartData = data || generateGlucoseData();
+  const [timeframe, setTimeframe] = useState<'weekly' | 'monthly' | 'yearly'>('weekly');
+  const chartData = data || generateGlucoseData(timeframe);
   const currentGlucose = chartData[chartData.length - 1]?.glucose || 95;
   
   const getGlucoseStatus = (level: number) => {
@@ -53,13 +99,41 @@ const GlucoseChart = ({ data, className = "" }: GlucoseChartProps) => {
     return "";
   };
 
+  const timeframeOptions = [
+    { value: 'weekly' as const, label: 'Weekly', icon: Calendar },
+    { value: 'monthly' as const, label: 'Monthly', icon: BarChart3 },
+    { value: 'yearly' as const, label: 'Yearly', icon: TrendingUp },
+  ];
+
   return (
     <div className={`bg-card rounded-xl p-6 shadow-sm border ${className}`}>
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-semibold text-card-foreground">Glucose Levels</h3>
-        <div className={`px-3 py-1 rounded-full text-sm font-medium ${glucoseStatus.bg}`} 
-             style={{ color: glucoseStatus.color }}>
-          {currentGlucose} mg/dL
+        <div className="flex items-center gap-3">
+          {/* Timeframe Selector */}
+          <div className="flex items-center bg-muted rounded-lg p-1">
+            {timeframeOptions.map((option) => {
+              const Icon = option.icon;
+              return (
+                <Button
+                  key={option.value}
+                  variant={timeframe === option.value ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setTimeframe(option.value)}
+                  className="text-xs h-7 px-3"
+                >
+                  <Icon className="h-3 w-3 mr-1" />
+                  {option.label}
+                </Button>
+              );
+            })}
+          </div>
+          
+          {/* Current Glucose Badge */}
+          <div className={`px-3 py-1 rounded-full text-sm font-medium ${glucoseStatus.bg}`} 
+               style={{ color: glucoseStatus.color }}>
+            {currentGlucose} mg/dL
+          </div>
         </div>
       </div>
       
@@ -143,7 +217,11 @@ const GlucoseChart = ({ data, className = "" }: GlucoseChartProps) => {
       
       <div className="mt-4 flex justify-between text-sm text-muted-foreground">
         <span>Target: 70-140 mg/dL</span>
-        <span>Last updated: {new Date().toLocaleTimeString()}</span>
+        <span>
+          {timeframe === 'weekly' && `Last updated: ${new Date().toLocaleTimeString()}`}
+          {timeframe === 'monthly' && `Data from last 30 days`}
+          {timeframe === 'yearly' && `Data from last 12 months`}
+        </span>
       </div>
     </div>
   );

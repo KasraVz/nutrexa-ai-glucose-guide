@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Heart } from 'lucide-react';
+import { Loader2, Heart, Shield } from 'lucide-react';
 
 const signUpSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -144,6 +144,10 @@ const SignUp = () => {
           </form>
           
           <div className="mt-6 text-center">
+            <div className="flex items-center justify-center gap-2 mb-3 text-sm text-muted-foreground">
+              <Shield className="h-4 w-4" />
+              <span>Your health data is encrypted and secure.</span>
+            </div>
             <p className="text-sm text-muted-foreground">
               Already have an account?{' '}
               <Link to="/signin" className="text-primary hover:underline">
