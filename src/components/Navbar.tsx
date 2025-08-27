@@ -118,6 +118,10 @@ const Navbar = ({ activeTab = "dashboard", onTabChange }: NavbarProps) => {
                     <Activity className="mr-2 h-4 w-4" />
                     View Summary
                   </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/my-plan')}>
+                    <ChefHat className="mr-2 h-4 w-4" />
+                    Today's Plan
+                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleSignOut}>
                     <LogOut className="mr-2 h-4 w-4" />

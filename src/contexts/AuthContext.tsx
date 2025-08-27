@@ -40,6 +40,9 @@ interface AuthContextType {
   setHasCompletedOnboarding: (completed: boolean) => void;
   justSignedUp: boolean;
   setJustSignedUp: (signedUp: boolean) => void;
+  dailyPlan: any[] | null;
+  setDailyPlan: (plan: any[] | null) => void;
+  addMealToPlan: (meal: any) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -60,6 +63,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
   const [justSignedUp, setJustSignedUp] = useState(false);
+  const [dailyPlan, setDailyPlan] = useState<any[] | null>(null);
 
   const signIn = async (email: string, password: string) => {
     // Mock authentication - in real app this would call an API
@@ -115,6 +119,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const addMealToPlan = (meal: any) => {
+    if (dailyPlan) {
+      setDailyPlan([...dailyPlan, meal]);
+    } else {
+      setDailyPlan([meal]);
+    }
+  };
+
   const value: AuthContextType = {
     user,
     isAuthenticated: !!user,
@@ -126,6 +138,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setHasCompletedOnboarding,
     justSignedUp,
     setJustSignedUp,
+    dailyPlan,
+    setDailyPlan,
+    addMealToPlan,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -1,7 +1,11 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Clock, Users, TrendingDown, Heart, ChefHat } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 const allMeals = [
   {
@@ -100,7 +104,26 @@ interface MealRecommendationsProps {
 }
 
 const MealRecommendations = ({ className = "", meals }: MealRecommendationsProps) => {
+  const { addMealToPlan } = useAuth();
+  const { toast } = useToast();
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [selectedMeal, setSelectedMeal] = useState<typeof allMeals[0] | null>(null);
+  
   const displayMeals = meals || allMeals.slice(0, 3);
+  
+  const handleAddToPlan = (meal: typeof allMeals[0]) => {
+    addMealToPlan(meal);
+    toast({
+      title: "Added to plan!",
+      description: `${meal.name} has been added to your daily plan.`
+    });
+  };
+  
+  const handleShowDetails = (meal: typeof allMeals[0]) => {
+    setSelectedMeal(meal);
+    setIsDetailModalOpen(true);
+  };
+  
   return (
     <div className={className}>
       <div className="flex items-center justify-between mb-6">
@@ -163,10 +186,10 @@ const MealRecommendations = ({ className = "", meals }: MealRecommendationsProps
               </div>
               
               <div className="flex gap-2">
-                <Button size="sm" className="flex-1">
+                <Button size="sm" className="flex-1" onClick={() => handleAddToPlan(meal)}>
                   Add to Plan
                 </Button>
-                <Button size="sm" variant="outline">
+                <Button size="sm" variant="outline" onClick={() => handleShowDetails(meal)}>
                   Details
                 </Button>
               </div>
@@ -174,6 +197,61 @@ const MealRecommendations = ({ className = "", meals }: MealRecommendationsProps
           </Card>
         ))}
       </div>
+
+      {/* Meal Details Modal */}
+      <AlertDialog open={isDetailModalOpen} onOpenChange={setIsDetailModalOpen}>
+        <AlertDialogContent className="max-w-lg">
+          <AlertDialogHeader>
+            <AlertDialogTitle>{selectedMeal?.name}</AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="space-y-4">
+                <p>{selectedMeal?.description}</p>
+                
+                <div className="grid grid-cols-2 gap-4 p-4 bg-muted rounded-lg">
+                  <div className="text-center">
+                    <div className="text-lg font-semibold">{selectedMeal?.calories}</div>
+                    <div className="text-sm text-muted-foreground">Calories</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-lg font-semibold">{selectedMeal?.prepTime}</div>
+                    <div className="text-sm text-muted-foreground">Prep Time</div>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-3 gap-2 text-center">
+                  <div>
+                    <div className="font-semibold">{selectedMeal?.protein}g</div>
+                    <div className="text-xs text-muted-foreground">Protein</div>
+                  </div>
+                  <div>
+                    <div className="font-semibold">{selectedMeal?.carbs}g</div>
+                    <div className="text-xs text-muted-foreground">Carbs</div>
+                  </div>
+                  <div>
+                    <div className="font-semibold">{selectedMeal?.fiber}g</div>
+                    <div className="text-xs text-muted-foreground">Fiber</div>
+                  </div>
+                </div>
+                
+                <div>
+                  <h4 className="font-medium mb-2">Recipe Steps:</h4>
+                  <ol className="text-sm text-muted-foreground space-y-1">
+                    <li>1. Prepare all ingredients and preheat cooking equipment</li>
+                    <li>2. Follow the preparation method for optimal nutrition retention</li>
+                    <li>3. Cook according to recommended time and temperature</li>
+                    <li>4. Serve immediately for best taste and glucose impact</li>
+                  </ol>
+                </div>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setIsDetailModalOpen(false)}>
+              Close
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

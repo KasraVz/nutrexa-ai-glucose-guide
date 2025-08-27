@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import GlucoseChart from "@/components/GlucoseChart";
 import QuickStats from "@/components/QuickStats";
@@ -9,7 +10,8 @@ import Achievements from "@/components/Achievements";
 import heroImage from "@/assets/nutrexa-hero.jpg";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Activity, Users, Trophy, Heart, ArrowLeft, Calendar, Loader2, Sparkles } from "lucide-react";
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Activity, Users, Trophy, Heart, ArrowLeft, Calendar, Loader2, Sparkles, Shield, ChefHat } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { notifications } from "@/lib/notifications";
 import { Link } from "react-router-dom";
@@ -100,7 +102,10 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [generatedMeals, setGeneratedMeals] = useState<typeof allMeals | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
-  const { user } = useAuth();
+  const [aiPlan, setAiPlan] = useState<typeof allMeals | null>(null);
+  const [isCgmModalOpen, setIsCgmModalOpen] = useState(false);
+  const { user, setDailyPlan } = useAuth();
+  const navigate = useNavigate();
   
   // Demo notification on mount
   useEffect(() => {
@@ -140,6 +145,8 @@ const Index = () => {
       const selected = shuffled.slice(0, Math.min(4, shuffled.length));
       
       setGeneratedMeals(selected);
+      setAiPlan(selected);
+      setDailyPlan(selected);
       setIsGenerating(false);
       
       notifications.achievement('AI Plan Generated!', 'Your personalized meal plan is ready based on your current glucose levels.');
@@ -194,6 +201,41 @@ const Index = () => {
             {/* Quick Stats */}
             <QuickStats />
 
+            {/* Today's AI-Generated Plan */}
+            {aiPlan && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-xl flex items-center gap-2">
+                    <Sparkles className="h-5 w-5 text-primary" />
+                    Today's AI-Generated Plan
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+                    {aiPlan.map((meal) => (
+                      <div key={meal.id} className="p-3 bg-muted/50 rounded-lg">
+                        <h4 className="font-medium text-sm mb-1">{meal.name}</h4>
+                        <p className="text-xs text-muted-foreground mb-2">{meal.culture}</p>
+                        <div className="text-xs space-y-1">
+                          <div>🔥 {meal.calories} cal</div>
+                          <div>⏱ {meal.prepTime}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-4 flex gap-2">
+                    <Button variant="outline" size="sm" onClick={() => navigate('/my-plan')}>
+                      <ChefHat className="h-4 w-4 mr-2" />
+                      View Full Plan
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => setAiPlan(null)}>
+                      Dismiss
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Main Content Grid */}
             <div className="grid lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
@@ -215,11 +257,11 @@ const Index = () => {
                     <CardTitle className="text-lg">Quick Actions</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
-                    <Button variant="outline" className="w-full justify-start">
+                    <Button variant="outline" className="w-full justify-start" onClick={() => setIsCgmModalOpen(true)}>
                       <Activity className="h-4 w-4 mr-2" />
                       Connect CGM Device
                     </Button>
-                    <Button variant="outline" className="w-full justify-start">
+                    <Button variant="outline" className="w-full justify-start" onClick={() => navigate('/profile')}>
                       <Heart className="h-4 w-4 mr-2" />
                       Update Health Profile
                     </Button>
@@ -323,6 +365,26 @@ const Index = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {renderContent()}
       </main>
+
+      {/* CGM Device Modal */}
+      <AlertDialog open={isCgmModalOpen} onOpenChange={setIsCgmModalOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <Shield className="h-5 w-5 text-primary" />
+              Connect Your CGM Device
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              This feature will allow you to automatically sync your blood glucose readings from your Continuous Glucose Monitor (CGM) device. This functionality is coming soon and will support major CGM brands like Dexcom, Freestyle Libre, and Medtronic.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setIsCgmModalOpen(false)}>
+              Got it
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

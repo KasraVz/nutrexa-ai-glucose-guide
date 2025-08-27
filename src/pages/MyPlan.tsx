@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Plus, Trash2, CalendarDays } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, CalendarDays, Sparkles } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 
@@ -31,7 +31,7 @@ const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
 
 const MyPlan = () => {
   const navigate = useNavigate();
-  const { user, updateProfile } = useAuth();
+  const { user, updateProfile, dailyPlan } = useAuth();
   const { toast } = useToast();
   
   const [weekPlan, setWeekPlan] = useState<Record<string, DayPlan>>({});
@@ -143,6 +143,32 @@ const MyPlan = () => {
           <CalendarDays className="h-6 w-6 text-primary" />
           <h1 className="text-3xl font-bold text-foreground">My Diet Plan</h1>
         </div>
+
+        {/* AI Generated Plan */}
+        {dailyPlan && dailyPlan.length > 0 && (
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-primary" />
+                Today's AI-Generated Recommendations
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+                {dailyPlan.map((meal, index) => (
+                  <div key={index} className="p-4 bg-primary/5 border border-primary/20 rounded-lg">
+                    <h3 className="font-medium mb-2">{meal.name}</h3>
+                    <p className="text-sm text-muted-foreground mb-3">{meal.description}</p>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-primary font-medium">{meal.calories} cal</span>
+                      <Badge variant="secondary">{meal.culture}</Badge>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         <div className="grid lg:grid-cols-4 gap-6">
           {/* Day Selector */}
