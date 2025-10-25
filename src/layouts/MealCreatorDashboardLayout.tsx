@@ -21,8 +21,9 @@ import {
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { ChefHat, DollarSign, User, Heart } from 'lucide-react';
+import { ChefHat, DollarSign, User } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import nutreXaLogo from '@/assets/nutrexa-logo.png';
 
 const menuItems = [
   { title: 'My Meals', url: '/dashboard/meal-creator/meals', icon: ChefHat },
@@ -43,9 +44,13 @@ export const MealCreatorDashboardLayout = () => {
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
         <Sidebar collapsible="offcanvas" className="border-r">
-          <div className="p-4 border-b flex items-center gap-2">
-            <Heart className="h-6 w-6 text-primary" />
-            <span className="font-bold text-lg">Nutrexa</span>
+          <div className="p-4 border-b flex items-center justify-center">
+            <img 
+              src={nutreXaLogo} 
+              alt="Nutrexa" 
+              className="h-8 w-auto cursor-pointer"
+              onClick={() => navigate('/dashboard/meal-creator')}
+            />
           </div>
           
           <SidebarContent>
