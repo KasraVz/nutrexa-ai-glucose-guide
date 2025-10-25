@@ -10,7 +10,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Heart, Shield, User, Stethoscope, ChefHat } from 'lucide-react';
+import { Loader2, Shield, User, Stethoscope, ChefHat } from 'lucide-react';
+import nutreXaLogo from '@/assets/nutrexa-logo.png';
 
 const signUpSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -76,9 +77,12 @@ const SignUp = () => {
     <div className="min-h-screen bg-gradient-to-br from-background to-muted flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center space-y-2">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <Heart className="h-8 w-8 text-primary" />
-            <h1 className="text-2xl font-bold text-foreground">Nutrexa</h1>
+          <div className="flex items-center justify-center mb-4">
+            <img 
+              src={nutreXaLogo} 
+              alt="Nutrexa" 
+              className="h-10 w-auto"
+            />
           </div>
           <CardTitle className="text-xl">Create your account</CardTitle>
           <CardDescription>
