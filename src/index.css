@@ -8,116 +8,127 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Nutrexa Luxurious & Trustworthy Design System */
-    --background: 210 20% 98%;
-    --foreground: 215 25% 27%;
+    /* Nutrexa Official Brand Colors */
+    --background: 0 0% 98%;
+    --foreground: 222 93% 13%;
 
     --card: 0 0% 100%;
-    --card-foreground: 215 25% 27%;
+    --card-foreground: 222 93% 13%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 215 25% 27%;
+    --popover-foreground: 222 93% 13%;
 
-    /* Scientific Trust Colors - Dark Navy Blue */
-    --primary: 220 40% 15%; /* Dark navy blue */
-    --primary-foreground: 45 100% 95%; /* Light gold */
-    --primary-glow: 220 35% 25%;
+    /* Primary - Deep Navy Blue (#021641) */
+    --primary: 222 93% 13%;
+    --primary-foreground: 0 0% 98%;
+    --primary-glow: 222 100% 67%;
 
-    /* Luxury Gold Accent */
-    --accent-gold: 45 85% 60%; /* Luxury gold */
-    --accent-gold-foreground: 220 40% 15%;
+    /* Secondary - Light Blue (#5784FF) */
+    --secondary: 222 100% 67%;
+    --secondary-foreground: 0 0% 98%;
 
-    /* Clean Background Colors */
-    --secondary: 210 17% 95%;
-    --secondary-foreground: 215 25% 27%;
+    /* Accent - Lime Green (#D3E070) */
+    --accent: 72 68% 66%;
+    --accent-foreground: 222 93% 13%;
+    --accent-gold: 72 68% 66%;
 
-    --muted: 210 17% 95%;
-    --muted-foreground: 215 13% 54%;
-
-    --accent: 45 85% 60%; /* Use gold as main accent */
-    --accent-foreground: 220 40% 15%;
-
-    /* Health Status Colors */
-    --success: 142 71% 45%; /* Healthy green */
+    /* Success - Mint Green (#34C78A) */
+    --success: 158 59% 49%;
     --success-foreground: 0 0% 100%;
+
+    /* Neutral - Off White (#E6E6E6) */
+    --muted: 0 0% 96%;
+    --muted-foreground: 222 20% 50%;
     
-    --warning: 43 96% 56%; /* Caution yellow */
+    --warning: 43 96% 56%;
     --warning-foreground: 0 0% 0%;
     
-    --destructive: 0 84% 60%; /* Alert red */
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 20% 90%;
-    --input: 210 20% 90%;
-    --ring: 195 100% 39%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 222 100% 67%;
 
     --radius: 0.75rem;
 
-    /* Health-focused gradients */
+    /* Nutrexa gradients */
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
-    --gradient-success: linear-gradient(135deg, hsl(var(--success)), hsl(142 71% 60%));
-    --gradient-hero: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%);
+    --gradient-success: linear-gradient(135deg, hsl(var(--success)), hsl(158 59% 60%));
+    --gradient-hero: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
 
-    /* Medical shadows */
+    /* Shadows */
     --shadow-primary: 0 10px 25px -5px hsl(var(--primary) / 0.1);
-    --shadow-card: 0 4px 12px -2px hsl(220 13% 85% / 0.15);
+    --shadow-card: 0 4px 12px -2px hsl(222 13% 85% / 0.15);
 
     /* Transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
+    /* Chart colors using brand palette */
+    --chart-1: 222 100% 67%;
+    --chart-2: 158 59% 49%;
+    --chart-3: 72 68% 66%;
+    --chart-4: 222 93% 13%;
+    --chart-5: 0 0% 90%;
+
     --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
+    --sidebar-foreground: 222 93% 13%;
+    --sidebar-primary: 222 93% 13%;
     --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 0 0% 95%;
+    --sidebar-accent-foreground: 222 93% 13%;
+    --sidebar-border: 0 0% 90%;
+    --sidebar-ring: 222 100% 67%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 222 93% 13%;
+    --foreground: 0 0% 98%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 222 80% 18%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 222 80% 18%;
+    --popover-foreground: 0 0% 98%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 222 100% 67%;
+    --primary-foreground: 0 0% 98%;
+    --primary-glow: 222 100% 75%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 222 80% 25%;
+    --secondary-foreground: 0 0% 98%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 222 60% 20%;
+    --muted-foreground: 0 0% 70%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 72 68% 66%;
+    --accent-foreground: 222 93% 13%;
+    --accent-gold: 72 68% 66%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --success: 158 59% 49%;
+    --success-foreground: 0 0% 100%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --destructive: 0 62.8% 50%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 222 60% 25%;
+    --input: 222 60% 25%;
+    --ring: 222 100% 67%;
+
+    --chart-1: 222 100% 67%;
+    --chart-2: 158 59% 49%;
+    --chart-3: 72 68% 66%;
+    --chart-4: 0 0% 90%;
+    --chart-5: 222 93% 13%;
+
+    --sidebar-background: 222 93% 13%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 222 100% 67%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 222 80% 20%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 222 60% 25%;
+    --sidebar-ring: 222 100% 67%;
   }
 }
 
