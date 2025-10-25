@@ -71,7 +71,7 @@ const Navbar = ({ activeTab = "dashboard", onTabChange }: NavbarProps) => {
   );
 
   return (
-    <nav className="bg-card border-b border-border">
+    <nav className="bg-gradient-to-r from-primary to-secondary border-b border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -97,11 +97,11 @@ const Navbar = ({ activeTab = "dashboard", onTabChange }: NavbarProps) => {
               return (
                 <Button
                   key={tab.id}
-                  variant={isActive ? "default" : "ghost"}
+                  variant={isActive ? "secondary" : "ghost"}
                   size="sm"
                   onClick={() => onTabChange?.(tab.id)}
                   className={`flex items-center space-x-2 ${
-                    isActive ? "" : "text-muted-foreground hover:text-foreground"
+                    isActive ? "bg-white/20 text-white hover:bg-white/30" : "text-white/80 hover:text-white hover:bg-white/10"
                   }`}
                 >
                   <Icon className="h-4 w-4" />
@@ -113,11 +113,11 @@ const Navbar = ({ activeTab = "dashboard", onTabChange }: NavbarProps) => {
 
           {/* Right Side Actions */}
           <div className="flex items-center space-x-3">
-            <Button variant="ghost" size="sm" onClick={handleSearch}>
+            <Button variant="ghost" size="sm" onClick={handleSearch} className="text-white/80 hover:text-white hover:bg-white/10">
               <Search className="h-4 w-4" />
             </Button>
             
-            <Button variant="ghost" size="sm" className="relative">
+            <Button variant="ghost" size="sm" className="relative text-white/80 hover:text-white hover:bg-white/10">
               <Bell className="h-4 w-4" />
               <Badge 
                 variant="destructive" 
@@ -131,14 +131,14 @@ const Navbar = ({ activeTab = "dashboard", onTabChange }: NavbarProps) => {
             <div className="flex items-center gap-2">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Avatar className="h-8 w-8 cursor-pointer">
+                  <Avatar className="h-8 w-8 cursor-pointer ring-2 ring-white/20 hover:ring-white/40 transition-all">
                     <AvatarImage src="/placeholder-avatar.jpg" alt={user?.name} />
-                    <AvatarFallback className="bg-primary text-primary-foreground text-sm">
+                    <AvatarFallback className="bg-white/20 text-white text-sm">
                       {user?.name?.charAt(0).toUpperCase() || 'U'}
                     </AvatarFallback>
                   </Avatar>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuContent align="end" className="w-48 bg-popover z-50">
                   <DropdownMenuItem onClick={handleProfileClick}>
                     <Settings className="mr-2 h-4 w-4" />
                     View Profile
@@ -161,7 +161,7 @@ const Navbar = ({ activeTab = "dashboard", onTabChange }: NavbarProps) => {
             </div>
 
             {/* Mobile Menu */}
-            <Button variant="ghost" size="sm" className="md:hidden">
+            <Button variant="ghost" size="sm" className="md:hidden text-white/80 hover:text-white hover:bg-white/10">
               <Menu className="h-4 w-4" />
             </Button>
           </div>
@@ -177,10 +177,12 @@ const Navbar = ({ activeTab = "dashboard", onTabChange }: NavbarProps) => {
               return (
                 <Button
                   key={tab.id}
-                  variant={isActive ? "default" : "ghost"}
+                  variant={isActive ? "secondary" : "ghost"}
                   size="sm"
                   onClick={() => onTabChange?.(tab.id)}
-                  className="flex items-center space-x-2 whitespace-nowrap"
+                  className={`flex items-center space-x-2 whitespace-nowrap ${
+                    isActive ? "bg-white/20 text-white hover:bg-white/30" : "text-white/80 hover:text-white hover:bg-white/10"
+                  }`}
                 >
                   <Icon className="h-4 w-4" />
                   <span>{tab.label}</span>

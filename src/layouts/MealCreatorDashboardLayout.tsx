@@ -24,6 +24,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { ChefHat, DollarSign, User } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import nutreXaLogo from '@/assets/nutrexa-logo.png';
+import nutreXaLogoWhite from '@/assets/nutrexa-logo-white.svg';
 
 const menuItems = [
   { title: 'My Meals', url: '/dashboard/meal-creator/meals', icon: ChefHat },

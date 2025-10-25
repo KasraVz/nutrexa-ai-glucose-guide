@@ -8,7 +8,7 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Nutrexa Official Brand Colors */
+    /* Nutrexa Official Brand Colors - From Official Style Guide */
     --background: 0 0% 98%;
     --foreground: 222 93% 13%;
 
@@ -18,13 +18,13 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 222 93% 13%;
 
-    /* Primary - Deep Navy Blue (#021641) */
-    --primary: 222 93% 13%;
+    /* Primary - Bright Blue (#1F5BFF) - Main brand color */
+    --primary: 222 100% 56%;
     --primary-foreground: 0 0% 98%;
-    --primary-glow: 222 100% 67%;
+    --primary-glow: 222 100% 76%;
 
-    /* Secondary - Light Blue (#5784FF) */
-    --secondary: 222 100% 67%;
+    /* Secondary - Pale Blue (#5784FF) */
+    --secondary: 222 100% 76%;
     --secondary-foreground: 0 0% 98%;
 
     /* Accent - Lime Green (#D3E070) */
@@ -33,11 +33,15 @@ All colors MUST be HSL.
     --accent-gold: 72 68% 66%;
 
     /* Success - Mint Green (#34C78A) */
-    --success: 158 59% 49%;
+    --success: 158 59% 54%;
     --success-foreground: 0 0% 100%;
 
+    /* Dark Navy (#021641) - For text and dark elements */
+    --navy: 222 93% 13%;
+    --navy-foreground: 0 0% 98%;
+
     /* Neutral - Off White (#E6E6E6) */
-    --muted: 0 0% 96%;
+    --muted: 0 0% 90%;
     --muted-foreground: 222 20% 50%;
     
     --warning: 43 96% 56%;
@@ -65,20 +69,20 @@ All colors MUST be HSL.
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
     /* Chart colors using brand palette */
-    --chart-1: 222 100% 67%;
-    --chart-2: 158 59% 49%;
+    --chart-1: 222 100% 56%;
+    --chart-2: 158 59% 54%;
     --chart-3: 72 68% 66%;
-    --chart-4: 222 93% 13%;
+    --chart-4: 222 100% 76%;
     --chart-5: 0 0% 90%;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 222 93% 13%;
-    --sidebar-primary: 222 93% 13%;
+    --sidebar-primary: 222 100% 56%;
     --sidebar-primary-foreground: 0 0% 98%;
     --sidebar-accent: 0 0% 95%;
     --sidebar-accent-foreground: 222 93% 13%;
     --sidebar-border: 0 0% 90%;
-    --sidebar-ring: 222 100% 67%;
+    --sidebar-ring: 222 100% 76%;
   }
 
   .dark {
@@ -91,9 +95,9 @@ All colors MUST be HSL.
     --popover: 222 80% 18%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 222 100% 67%;
-    --primary-foreground: 0 0% 98%;
-    --primary-glow: 222 100% 75%;
+    --primary: 222 100% 76%;
+    --primary-foreground: 222 93% 13%;
+    --primary-glow: 222 100% 85%;
 
     --secondary: 222 80% 25%;
     --secondary-foreground: 0 0% 98%;
@@ -105,8 +109,11 @@ All colors MUST be HSL.
     --accent-foreground: 222 93% 13%;
     --accent-gold: 72 68% 66%;
 
-    --success: 158 59% 49%;
+    --success: 158 59% 54%;
     --success-foreground: 0 0% 100%;
+    
+    --navy: 222 93% 13%;
+    --navy-foreground: 0 0% 98%;
 
     --destructive: 0 62.8% 50%;
     --destructive-foreground: 0 0% 98%;
@@ -115,20 +122,20 @@ All colors MUST be HSL.
     --input: 222 60% 25%;
     --ring: 222 100% 67%;
 
-    --chart-1: 222 100% 67%;
-    --chart-2: 158 59% 49%;
+    --chart-1: 222 100% 76%;
+    --chart-2: 158 59% 54%;
     --chart-3: 72 68% 66%;
     --chart-4: 0 0% 90%;
     --chart-5: 222 93% 13%;
 
     --sidebar-background: 222 93% 13%;
     --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 222 100% 67%;
-    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-primary: 222 100% 76%;
+    --sidebar-primary-foreground: 222 93% 13%;
     --sidebar-accent: 222 80% 20%;
     --sidebar-accent-foreground: 0 0% 98%;
     --sidebar-border: 222 60% 25%;
-    --sidebar-ring: 222 100% 67%;
+    --sidebar-ring: 222 100% 76%;
   }
 }
 
