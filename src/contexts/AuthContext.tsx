@@ -70,7 +70,7 @@ export interface UserProfile {
   age: number;
   weight: number;
   height: number;
-  diabetesType: 'type1' | 'type2' | 'prediabetes' | '';
+  diabetesType: 'type1' | 'type2' | 'prediabetes' | 'none' | '';
   activityLevel: 'sedentary' | 'light' | 'moderate' | 'active' | 'very-active';
   sleepHours: number;
   allergies: string[];
@@ -78,9 +78,10 @@ export interface UserProfile {
   culturalPreferences: string[];
   medications: string[];
   isPublic: boolean;
-  primaryGoal?: string;
+  primaryGoal?: 'diabetes-t1' | 'diabetes-t2' | 'diabetes-pre' | 'general-health' | 'sports-nutrition' | 'weight-management' | 'sleep-quality' | 'disease-prevention' | 'other';
   jobSchedule?: string;
   medicationReminders?: MedicationReminder[];
+  moodHistory?: Array<{ date: string; mood: 'happy' | 'okay' | 'neutral' | 'worried' | 'angry' }>;
 }
 
 interface AuthContextType {

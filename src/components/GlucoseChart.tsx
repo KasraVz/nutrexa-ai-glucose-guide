@@ -137,6 +137,24 @@ const GlucoseChart = ({ data, className = "" }: GlucoseChartProps) => {
     }
   };
 
+  const generateChartSummary = (data: Array<{glucose: number}>) => {
+    const avg = Math.round(data.reduce((sum, d) => sum + d.glucose, 0) / data.length);
+    const inRange = data.filter(d => d.glucose >= 70 && d.glucose <= 140).length;
+    const percentInRange = Math.round((inRange / data.length) * 100);
+    const peaks = data.filter(d => d.glucose > 140).length;
+    const lows = data.filter(d => d.glucose < 70).length;
+    
+    if (lows > 0) {
+      return `⚠️ ${lows} low reading${lows > 1 ? 's' : ''} detected. Review with your healthcare provider. Average glucose: ${avg} mg/dL.`;
+    } else if (percentInRange >= 80) {
+      return `🎉 Excellent control! ${percentInRange}% of readings in target range (70-140 mg/dL). Average: ${avg} mg/dL. Keep up the great work!`;
+    } else if (peaks > data.length * 0.3) {
+      return `📈 ${peaks} high reading${peaks > 1 ? 's' : ''} detected. Consider reviewing meal timing and portions. Average: ${avg} mg/dL.`;
+    } else {
+      return `${percentInRange}% in target range. Average: ${avg} mg/dL. You're making progress toward your goals!`;
+    }
+  };
+
   return (
     <div className={`bg-card rounded-xl p-6 shadow-sm border ${className}`}>
       <div className="flex items-center justify-between mb-6">
@@ -281,6 +299,17 @@ const GlucoseChart = ({ data, className = "" }: GlucoseChartProps) => {
           </AlertDescription>
         </Alert>
       )}
+      
+      {/* Chart Summary */}
+      <div className="mt-4 p-4 bg-muted/30 rounded-lg">
+        <h4 className="text-sm font-semibold mb-2 flex items-center gap-2">
+          <TrendingUp className="h-4 w-4" />
+          Trend Analysis
+        </h4>
+        <p className="text-sm text-muted-foreground">
+          {generateChartSummary(chartData)}
+        </p>
+      </div>
       
       <div className="mt-4 flex justify-between text-sm text-muted-foreground">
         <span>Target: 70-140 mg/dL</span>

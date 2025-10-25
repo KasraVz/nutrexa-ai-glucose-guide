@@ -18,12 +18,14 @@ import { useToast } from '@/hooks/use-toast';
 import { Heart, Check, ChevronsUpDown, X, ArrowRight, ArrowLeft, Activity, Utensils, Moon, Pill } from 'lucide-react';
 
 const onboardingSchema = z.object({
+  primaryGoal: z.enum(['diabetes-t1', 'diabetes-t2', 'diabetes-pre', 'general-health', 'sports-nutrition', 'weight-management', 'sleep-quality', 'disease-prevention', 'other'], {
+    required_error: 'Please select your primary health goal'
+  }),
+  jobSchedule: z.string().optional(),
   age: z.coerce.number().min(1, 'Age must be at least 1').max(120, 'Age must be less than 120'),
   weight: z.coerce.number().min(20, 'Weight must be at least 20 kg').max(500, 'Weight must be less than 500 kg'),
   height: z.coerce.number().min(100, 'Height must be at least 100 cm').max(250, 'Height must be less than 250 cm'),
-  diabetesType: z.enum(['type1', 'type2', 'prediabetes'], {
-    required_error: 'Please select your diabetes type',
-  }),
+  diabetesType: z.enum(['type1', 'type2', 'prediabetes', 'none']).optional(),
   activityLevel: z.enum(['sedentary', 'light', 'moderate', 'active', 'very-active'], {
     required_error: 'Please select your activity level',
   }),
@@ -56,7 +58,20 @@ const ACTIVITY_LEVELS = [
 const DIABETES_TYPES = [
   { value: 'type1', label: 'Type 1', icon: '🩺', desc: 'Insulin-dependent diabetes' },
   { value: 'type2', label: 'Type 2', icon: '🍎', desc: 'Non-insulin-dependent diabetes' },
-  { value: 'prediabetes', label: 'Pre-diabetes', icon: '⚠️', desc: 'Elevated blood sugar levels' }
+  { value: 'prediabetes', label: 'Pre-diabetes', icon: '⚠️', desc: 'Elevated blood sugar levels' },
+  { value: 'none', label: 'None', icon: '✅', desc: 'No diabetes diagnosis' }
+];
+
+const HEALTH_GOALS = [
+  { value: 'diabetes-t1', label: 'Type 1 Diabetes Management', icon: '💉', desc: 'Managing insulin-dependent diabetes' },
+  { value: 'diabetes-t2', label: 'Type 2 Diabetes Management', icon: '🩺', desc: 'Managing type 2 diabetes' },
+  { value: 'diabetes-pre', label: 'Pre-Diabetes Prevention', icon: '⚠️', desc: 'Prevent progression to diabetes' },
+  { value: 'general-health', label: 'General Health', icon: '🌟', desc: 'Overall wellness and vitality' },
+  { value: 'sports-nutrition', label: 'Sports Nutrition', icon: '🏃', desc: 'Optimize athletic performance' },
+  { value: 'weight-management', label: 'Weight Management', icon: '⚖️', desc: 'Healthy weight goals' },
+  { value: 'sleep-quality', label: 'Improve Sleep Quality', icon: '😴', desc: 'Better rest and recovery' },
+  { value: 'disease-prevention', label: 'Disease Prevention', icon: '🛡️', desc: 'Preventive health measures' },
+  { value: 'other', label: 'Other', icon: '🎯', desc: 'Custom health goals' }
 ];
 
 const OnboardingMultiStep = () => {
@@ -82,7 +97,8 @@ const OnboardingMultiStep = () => {
   });
 
   const steps = [
-    { title: 'Health Conditions', icon: '🩺', description: 'Tell us about your diabetes type' },
+    { title: 'Health Goals', icon: '🎯', description: 'What brings you to Nutrexa?' },
+    { title: 'Health Conditions', icon: '🩺', description: 'Tell us about your health status' },
     { title: 'Personal Info', icon: '👤', description: 'Basic information about yourself' },
     { title: 'Lifestyle', icon: '🏃', description: 'Activity level and sleep habits' },
     { title: 'Medications', icon: '💊', description: 'Current medications you take' },
@@ -96,7 +112,7 @@ const OnboardingMultiStep = () => {
       age: data.age,
       weight: data.weight,
       height: data.height,
-      diabetesType: data.diabetesType,
+      diabetesType: data.diabetesType || 'none',
       activityLevel: data.activityLevel,
       sleepHours: data.sleepHours,
       allergies: data.allergies,
@@ -104,6 +120,8 @@ const OnboardingMultiStep = () => {
       culturalPreferences: data.culturalPreferences,
       medications: data.medications,
       isPublic: data.isPublic,
+      primaryGoal: data.primaryGoal,
+      jobSchedule: data.jobSchedule,
     };
     
     updateProfile(profile);
@@ -180,43 +198,86 @@ const OnboardingMultiStep = () => {
 
   const renderStep = () => {
     switch (currentStep) {
-      case 0: // Health Conditions
+      case 0: // Health Goals
         return (
           <div className="space-y-6">
             <div className="text-center mb-8">
-              <div className="text-4xl mb-4">🩺</div>
-              <h2 className="text-2xl font-bold mb-2">Health Conditions</h2>
-              <p className="text-muted-foreground">Tell us about your diabetes type to personalize your experience</p>
+              <div className="text-4xl mb-4">🎯</div>
+              <h2 className="text-2xl font-bold mb-2">Your Health Goals</h2>
+              <p className="text-muted-foreground">Help us personalize your Nutrexa experience</p>
             </div>
             
             <div className="space-y-4">
-              <Label className="text-base">What type of diabetes do you have?</Label>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {DIABETES_TYPES.map((type) => (
+              <Label className="text-base">What's your primary health goal?</Label>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {HEALTH_GOALS.map((goal) => (
                   <button
-                    key={type.value}
+                    key={goal.value}
                     type="button"
-                    onClick={() => form.setValue('diabetesType', type.value as any)}
+                    onClick={() => form.setValue('primaryGoal', goal.value as any)}
                     className={`p-4 rounded-lg border-2 transition-all hover:border-primary/50 text-left ${
-                      form.watch('diabetesType') === type.value
+                      form.watch('primaryGoal') === goal.value
                         ? 'border-primary bg-primary/5'
                         : 'border-muted hover:border-primary/30'
                     }`}
                   >
-                    <div className="text-2xl mb-2">{type.icon}</div>
-                    <div className="font-medium">{type.label}</div>
-                    <div className="text-sm text-muted-foreground">{type.desc}</div>
+                    <div className="text-2xl mb-2">{goal.icon}</div>
+                    <div className="font-medium text-sm">{goal.label}</div>
+                    <div className="text-xs text-muted-foreground">{goal.desc}</div>
                   </button>
                 ))}
               </div>
-              {form.formState.errors.diabetesType && (
-                <p className="text-sm text-destructive">{form.formState.errors.diabetesType.message}</p>
+              {form.formState.errors.primaryGoal && (
+                <p className="text-sm text-destructive">{form.formState.errors.primaryGoal.message}</p>
               )}
             </div>
           </div>
         );
 
-      case 1: // Personal Info
+      case 1: // Health Conditions
+        return (
+          <div className="space-y-6">
+            <div className="text-center mb-8">
+              <div className="text-4xl mb-4">🩺</div>
+              <h2 className="text-2xl font-bold mb-2">Health Status</h2>
+              <p className="text-muted-foreground">Tell us about your current health condition</p>
+            </div>
+            
+            {form.watch('primaryGoal')?.includes('diabetes') && (
+              <div className="space-y-4">
+                <Label className="text-base">Diabetes Type</Label>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {DIABETES_TYPES.map((type) => (
+                    <button
+                      key={type.value}
+                      type="button"
+                      onClick={() => form.setValue('diabetesType', type.value as any)}
+                      className={`p-4 rounded-lg border-2 transition-all hover:border-primary/50 text-left ${
+                        form.watch('diabetesType') === type.value
+                          ? 'border-primary bg-primary/5'
+                          : 'border-muted hover:border-primary/30'
+                      }`}
+                    >
+                      <div className="text-2xl mb-2">{type.icon}</div>
+                      <div className="font-medium text-sm">{type.label}</div>
+                      <div className="text-xs text-muted-foreground">{type.desc}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {!form.watch('primaryGoal')?.includes('diabetes') && (
+              <div className="p-6 bg-muted/50 rounded-lg text-center">
+                <p className="text-muted-foreground">
+                  Since your primary goal doesn't involve diabetes management, you can skip diabetes type selection.
+                </p>
+              </div>
+            )}
+          </div>
+        );
+
+      case 2: // Personal Info
         return (
           <div className="space-y-6">
             <div className="text-center mb-8">
@@ -263,10 +324,23 @@ const OnboardingMultiStep = () => {
                 )}
               </div>
             </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="jobSchedule">Job Title / Work Schedule (Optional)</Label>
+              <Input
+                id="jobSchedule"
+                placeholder="e.g., Night shift nurse, 9-5 office work"
+                {...form.register('jobSchedule')}
+                autoComplete="off"
+              />
+              <p className="text-xs text-muted-foreground">
+                This helps us personalize meal timing suggestions
+              </p>
+            </div>
           </div>
         );
 
-      case 2: // Lifestyle
+      case 3: // Lifestyle
         return (
           <div className="space-y-6">
             <div className="text-center mb-8">
@@ -322,7 +396,7 @@ const OnboardingMultiStep = () => {
           </div>
         );
 
-      case 3: // Medications
+      case 4: // Medications
         return (
           <div className="space-y-6">
             <div className="text-center mb-8">
@@ -409,7 +483,7 @@ const OnboardingMultiStep = () => {
           </div>
         );
 
-      case 4: // Preferences
+      case 5: // Preferences
         return (
           <div className="space-y-6">
             <div className="text-center mb-8">

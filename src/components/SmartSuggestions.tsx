@@ -20,6 +20,7 @@ const SmartSuggestions = ({ userProfile, currentGlucose = 95 }: SmartSuggestions
     const suggestions: Suggestion[] = [];
     const currentHour = new Date().getHours();
     const primaryGoal = userProfile?.primaryGoal || '';
+    const jobSchedule = userProfile?.jobSchedule?.toLowerCase() || '';
 
     // Time-based suggestions
     if (currentHour >= 6 && currentHour < 10) {
@@ -93,6 +94,16 @@ const SmartSuggestions = ({ userProfile, currentGlucose = 95 }: SmartSuggestions
         title: 'Take Movement Breaks',
         description: 'Stand and stretch every hour to improve insulin sensitivity.',
         icon: <Activity className="h-5 w-5 text-primary" />,
+      });
+    }
+
+    // Job schedule-based suggestions
+    if (jobSchedule.includes('night')) {
+      suggestions.push({
+        id: 'night-shift-timing',
+        title: 'Night Shift Nutrition',
+        description: 'Eat your main meal before your shift starts to maintain stable glucose during work hours.',
+        icon: <Moon className="h-5 w-5 text-primary" />,
       });
     }
 

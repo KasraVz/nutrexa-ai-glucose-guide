@@ -58,10 +58,21 @@ const SignUp = () => {
     setIsLoading(true);
     try {
       await signUp(data.email, data.password, data.name, data.role);
+      
+      // Show email verification message
       toast({
-        title: "Account created!",
-        description: "Welcome to Nutrexa. Let's get you set up.",
+        title: "Verification email sent! ✉️",
+        description: "Please check your email to verify your account. You can still proceed to set up your profile.",
+        duration: 5000,
       });
+      
+      // Also show welcome message
+      setTimeout(() => {
+        toast({
+          title: "Account created!",
+          description: "Welcome to Nutrexa. Let's get you set up.",
+        });
+      }, 500);
     } catch (error) {
       toast({
         title: "Sign up failed",

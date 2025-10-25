@@ -4,8 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/contexts/AuthContext";
 import nutreXaLogo from "@/assets/nutrexa-logo-white.svg";
 import { 
@@ -18,7 +20,9 @@ import {
   Menu,
   LogOut,
   X,
-  CalendarDays
+  CalendarDays,
+  AlertTriangle,
+  Globe
 } from "lucide-react";
 
 interface NavbarProps {
@@ -127,13 +131,50 @@ const Navbar = ({ activeTab = "dashboard", onTabChange }: NavbarProps) => {
             </Button>
             
             <Button variant="ghost" size="sm" className="relative text-white/80 hover:text-white hover:bg-white/10">
-              <Bell className="h-4 w-4" />
-              <Badge 
-                variant="destructive" 
-                className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
-              >
-                2
-              </Badge>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <div className="relative cursor-pointer">
+                    <Bell className="h-4 w-4" />
+                    <Badge 
+                      variant="destructive" 
+                      className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
+                    >
+                      3
+                    </Badge>
+                  </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-80">
+                  <div className="px-3 py-2 border-b">
+                    <h4 className="font-semibold">Notifications & Alerts</h4>
+                  </div>
+                  <div className="max-h-96 overflow-y-auto">
+                    <DropdownMenuItem className="flex items-start gap-3 p-3 bg-destructive/10">
+                      <AlertTriangle className="h-4 w-4 text-destructive mt-0.5" />
+                      <div className="flex-1">
+                        <p className="font-medium text-sm">Low Glucose Alert</p>
+                        <p className="text-xs text-muted-foreground">Reading of 65 mg/dL at 8:15 AM</p>
+                        <p className="text-xs text-muted-foreground mt-1">2 hours ago</p>
+                      </div>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className="flex items-start gap-3 p-3 bg-warning/10">
+                      <Bell className="h-4 w-4 text-warning mt-0.5" />
+                      <div className="flex-1">
+                        <p className="font-medium text-sm">Medication Reminder</p>
+                        <p className="text-xs text-muted-foreground">Time for your evening Metformin</p>
+                        <p className="text-xs text-muted-foreground mt-1">30 minutes ago</p>
+                      </div>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className="flex items-start gap-3 p-3">
+                      <Activity className="h-4 w-4 text-primary mt-0.5" />
+                      <div className="flex-1">
+                        <p className="font-medium text-sm">New Meal Recommendation</p>
+                        <p className="text-xs text-muted-foreground">3 new meals added to your plan</p>
+                        <p className="text-xs text-muted-foreground mt-1">1 day ago</p>
+                      </div>
+                    </DropdownMenuItem>
+                  </div>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </Button>
 
             {/* User Menu */}
@@ -160,6 +201,20 @@ const Navbar = ({ activeTab = "dashboard", onTabChange }: NavbarProps) => {
                     <ChefHat className="mr-2 h-4 w-4" />
                     Today's Plan
                   </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <div className="px-2 py-2">
+                    <Label className="text-xs text-muted-foreground mb-2 block">Language</Label>
+                    <Select defaultValue="en">
+                      <SelectTrigger className="w-full h-8">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="en">🇺🇸 English</SelectItem>
+                        <SelectItem value="fa">🇮🇷 Persian</SelectItem>
+                        <SelectItem value="es">🇪🇸 Spanish</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleSignOut}>
                     <LogOut className="mr-2 h-4 w-4" />

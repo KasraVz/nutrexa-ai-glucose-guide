@@ -10,6 +10,7 @@ import Achievements from "@/components/Achievements";
 import SmartSuggestions from "@/components/SmartSuggestions";
 import QuickLogDialog from "@/components/QuickLogDialog";
 import SupportChat from "@/components/SupportChat";
+import MoodCheckInDialog from "@/components/MoodCheckInDialog";
 import heroImage from "@/assets/nutrexa-hero.jpg";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -110,7 +111,8 @@ const Index = () => {
   const [isCgmModalOpen, setIsCgmModalOpen] = useState(false);
   const [isQuickLogOpen, setIsQuickLogOpen] = useState(false);
   const [isSupportChatOpen, setIsSupportChatOpen] = useState(false);
-  const { user, setDailyPlan } = useAuth();
+  const [isMoodCheckInOpen, setIsMoodCheckInOpen] = useState(false);
+  const { user, setDailyPlan, updateProfile } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   
@@ -122,6 +124,38 @@ const Index = () => {
     
     return () => clearTimeout(timer);
   }, []);
+
+  // Mood check-in prompt
+  useEffect(() => {
+    const today = new Date().toDateString();
+    const lastMoodDate = user?.profile?.moodHistory?.[0]?.date;
+    const hasLoggedToday = lastMoodDate && new Date(lastMoodDate).toDateString() === today;
+    
+    if (!hasLoggedToday && user?.profile) {
+      // Show dialog after 5 seconds
+      const timer = setTimeout(() => setIsMoodCheckInOpen(true), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [user]);
+
+  const handleMoodSelect = (mood: 'happy' | 'okay' | 'neutral' | 'worried' | 'angry') => {
+    if (!user?.profile) return;
+    
+    const updatedMoodHistory = [
+      { date: new Date().toISOString(), mood },
+      ...(user.profile.moodHistory || []).slice(0, 29) // Keep last 30 days
+    ];
+    
+    updateProfile({
+      ...user.profile,
+      moodHistory: updatedMoodHistory
+    });
+    
+    toast({
+      title: "Mood logged! 💭",
+      description: "Thanks for sharing. We'll use this to better support you.",
+    });
+  };
 
   const generateAIMealPlan = () => {
     setIsGenerating(true);
@@ -200,7 +234,11 @@ const Index = () => {
                 
                 {/* Dynamic Health Summary */}
                 <div className="mb-6">
-                  <HealthSummary userName={user?.name || 'John'} />
+                  <HealthSummary 
+                    userName={user?.name || 'John'} 
+                    currentGlucose={95}
+                    userProfile={user?.profile}
+                  />
                 </div>
                 <Button 
                   variant="secondary" 
@@ -449,6 +487,13 @@ const Index = () => {
       <SupportChat 
         open={isSupportChatOpen} 
         onOpenChange={setIsSupportChatOpen} 
+      />
+
+      {/* Mood Check-In Dialog */}
+      <MoodCheckInDialog
+        open={isMoodCheckInOpen}
+        onOpenChange={setIsMoodCheckInOpen}
+        onMoodSelect={handleMoodSelect}
       />
     </div>
   );

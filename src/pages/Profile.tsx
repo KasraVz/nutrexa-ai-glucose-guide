@@ -21,7 +21,7 @@ const profileSchema = z.object({
   age: z.coerce.number().min(1, 'Age must be at least 1').max(120, 'Age must be less than 120'),
   weight: z.coerce.number().min(20, 'Weight must be at least 20 kg').max(500, 'Weight must be less than 500 kg'),
   height: z.coerce.number().min(100, 'Height must be at least 100 cm').max(250, 'Height must be less than 250 cm'),
-  diabetesType: z.enum(['type1', 'type2', 'prediabetes']),
+  diabetesType: z.enum(['type1', 'type2', 'prediabetes', 'none']),
   activityLevel: z.enum(['sedentary', 'light', 'moderate', 'active', 'very-active']),
   sleepHours: z.coerce.number().min(3, 'Sleep hours must be at least 3').max(12, 'Sleep hours must be less than 12'),
   allergies: z.array(z.string()).default([]),
