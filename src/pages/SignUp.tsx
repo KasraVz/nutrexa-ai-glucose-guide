@@ -11,7 +11,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Shield, User, Stethoscope, ChefHat } from 'lucide-react';
-import nutreXaLogo from '@/assets/nutrexa-logo.png';
+import nutreXaLogo from '@/assets/nutrexa-logo-white.svg';
 
 const signUpSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),

@@ -10,7 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Shield } from 'lucide-react';
-import nutreXaLogo from '@/assets/nutrexa-logo.png';
+import nutreXaLogo from '@/assets/nutrexa-logo-white.svg';
 
 const signInSchema = z.object({
   email: z.string().email('Please enter a valid email address'),

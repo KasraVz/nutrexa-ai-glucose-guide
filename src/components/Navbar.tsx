@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useAuth } from "@/contexts/AuthContext";
-import nutreXaLogo from "@/assets/nutrexa-logo.png";
+import nutreXaLogo from "@/assets/nutrexa-logo-white.svg";
 import { 
   Activity, 
   Users, 
