@@ -108,14 +108,17 @@ const MealRecommendations = ({ className = "", meals }: MealRecommendationsProps
   const { toast } = useToast();
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [selectedMeal, setSelectedMeal] = useState<typeof allMeals[0] | null>(null);
+  const [addedMeals, setAddedMeals] = useState<Set<number>>(new Set());
   
   const displayMeals = meals || allMeals.slice(0, 3);
   
   const handleAddToPlan = (meal: typeof allMeals[0]) => {
     addMealToPlan(meal);
+    setAddedMeals(prev => new Set(prev).add(meal.id));
     toast({
-      title: "Added to plan!",
-      description: `${meal.name} has been added to your daily plan.`
+      title: "✓ Added to plan!",
+      description: `${meal.name} has been added to your daily plan.`,
+      duration: 3000,
     });
   };
   
@@ -189,8 +192,14 @@ const MealRecommendations = ({ className = "", meals }: MealRecommendationsProps
               </div>
               
               <div className="flex gap-2">
-                <Button size="sm" className="flex-1" onClick={() => handleAddToPlan(meal)}>
-                  Add to Plan
+                <Button 
+                  size="sm" 
+                  className="flex-1" 
+                  onClick={() => handleAddToPlan(meal)}
+                  variant={addedMeals.has(meal.id) ? "secondary" : "default"}
+                  disabled={addedMeals.has(meal.id)}
+                >
+                  {addedMeals.has(meal.id) ? "✓ Added" : "Add to Plan"}
                 </Button>
                 <Button size="sm" variant="outline" onClick={() => handleShowDetails(meal)}>
                   Details
