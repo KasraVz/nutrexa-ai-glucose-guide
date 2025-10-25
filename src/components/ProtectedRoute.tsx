@@ -5,21 +5,39 @@ import { useAuth } from '@/contexts/AuthContext';
 interface ProtectedRouteProps {
   children: React.ReactNode;
   requireOnboarding?: boolean;
+  allowedRoles?: Array<'patient' | 'specialist' | 'meal-creator'>;
 }
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
   children, 
-  requireOnboarding = false 
+  requireOnboarding = false,
+  allowedRoles
 }) => {
-  const { isAuthenticated, hasCompletedOnboarding, justSignedUp } = useAuth();
+  const { isAuthenticated, hasCompletedOnboarding, justSignedUp, user } = useAuth();
 
   if (!isAuthenticated) {
     return <Navigate to="/signin" replace />;
   }
 
+  // Check role-based access
+  if (allowedRoles && user?.role && !allowedRoles.includes(user.role)) {
+    // Redirect to appropriate dashboard based on user's role
+    const dashboardPath = user.role === 'specialist' 
+      ? '/dashboard/specialist'
+      : user.role === 'meal-creator'
+      ? '/dashboard/meal-creator'
+      : '/dashboard';
+    return <Navigate to={dashboardPath} replace />;
+  }
+
   // Only allow onboarding for users who just signed up
   if (window.location.pathname === '/onboarding' && !justSignedUp) {
-    return <Navigate to="/dashboard" replace />;
+    const dashboardPath = user?.role === 'specialist' 
+      ? '/dashboard/specialist'
+      : user?.role === 'meal-creator'
+      ? '/dashboard/meal-creator'
+      : '/dashboard';
+    return <Navigate to={dashboardPath} replace />;
   }
 
   if (requireOnboarding && !hasCompletedOnboarding) {
