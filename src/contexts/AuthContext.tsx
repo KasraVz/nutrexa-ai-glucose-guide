@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 export interface Achievement {
   title: string;
@@ -97,6 +97,8 @@ interface AuthContextType {
   dailyPlan: any[] | null;
   setDailyPlan: (plan: any[] | null) => void;
   addMealToPlan: (meal: any) => void;
+  weekPlan: Record<string, any>;
+  setWeekPlan: (plan: Record<string, any>) => void;
   specialistPatients: PatientData[];
   addPatientByUid: (uid: string) => Promise<{ success: boolean; patient?: PatientData; error?: string }>;
   getPatientData: (patientId: string) => PatientData | null;
@@ -159,6 +161,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
   const [justSignedUp, setJustSignedUp] = useState(false);
   const [dailyPlan, setDailyPlan] = useState<any[] | null>(null);
+  const [weekPlan, setWeekPlan] = useState<Record<string, any>>({});
   const [specialistPatients, setSpecialistPatients] = useState<PatientData[]>([]);
   const [creatorMeals, setCreatorMeals] = useState<CreatedMeal[]>([]);
   const [earnings] = useState({
@@ -167,6 +170,70 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     thisMonth: 342.00,
     lastPayoutDate: '2025-10-15'
   });
+
+  // Restore session from localStorage on mount
+  useEffect(() => {
+    const savedUser = localStorage.getItem('nutrexa_user');
+    const savedOnboarding = localStorage.getItem('nutrexa_onboarding');
+    const savedWeekPlan = localStorage.getItem('nutrexa_week_plan');
+    const savedDailyPlan = localStorage.getItem('nutrexa_daily_plan');
+    
+    if (savedUser) {
+      try {
+        setUser(JSON.parse(savedUser));
+      } catch (e) {
+        console.error('Failed to parse user data');
+      }
+    }
+    
+    if (savedOnboarding === 'true') {
+      setHasCompletedOnboarding(true);
+    }
+
+    if (savedWeekPlan) {
+      try {
+        setWeekPlan(JSON.parse(savedWeekPlan));
+      } catch (e) {
+        console.error('Failed to parse week plan');
+      }
+    }
+
+    if (savedDailyPlan) {
+      try {
+        setDailyPlan(JSON.parse(savedDailyPlan));
+      } catch (e) {
+        console.error('Failed to parse daily plan');
+      }
+    }
+  }, []);
+
+  // Save user to localStorage whenever it changes
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem('nutrexa_user', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('nutrexa_user');
+    }
+  }, [user]);
+
+  // Save onboarding status to localStorage
+  useEffect(() => {
+    localStorage.setItem('nutrexa_onboarding', hasCompletedOnboarding.toString());
+  }, [hasCompletedOnboarding]);
+
+  // Save week plan to localStorage
+  useEffect(() => {
+    if (Object.keys(weekPlan).length > 0) {
+      localStorage.setItem('nutrexa_week_plan', JSON.stringify(weekPlan));
+    }
+  }, [weekPlan]);
+
+  // Save daily plan to localStorage
+  useEffect(() => {
+    if (dailyPlan) {
+      localStorage.setItem('nutrexa_daily_plan', JSON.stringify(dailyPlan));
+    }
+  }, [dailyPlan]);
 
   const signIn = async (email: string, password: string) => {
     // Mock authentication - in real app this would call an API
@@ -224,6 +291,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setUser(null);
     setHasCompletedOnboarding(false);
     setJustSignedUp(false);
+    setDailyPlan(null);
+    setWeekPlan({});
+    // Clear localStorage
+    localStorage.removeItem('nutrexa_user');
+    localStorage.removeItem('nutrexa_onboarding');
+    localStorage.removeItem('nutrexa_week_plan');
+    localStorage.removeItem('nutrexa_daily_plan');
   };
 
   const updateProfile = (profile: UserProfile | SpecialistProfile | MealCreatorProfile) => {
@@ -332,6 +406,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     dailyPlan,
     setDailyPlan,
     addMealToPlan,
+    weekPlan,
+    setWeekPlan,
     specialistPatients,
     addPatientByUid,
     getPatientData,

@@ -31,7 +31,7 @@ const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
 
 const MyPlan = () => {
   const navigate = useNavigate();
-  const { user, updateProfile, dailyPlan } = useAuth();
+  const { user, updateProfile, dailyPlan, weekPlan: contextWeekPlan, setWeekPlan: setContextWeekPlan } = useAuth();
   const { toast } = useToast();
   
   const [weekPlan, setWeekPlan] = useState<Record<string, DayPlan>>({});
@@ -44,6 +44,20 @@ const MyPlan = () => {
   });
   const [currentMealType, setCurrentMealType] = useState<'breakfast' | 'lunch' | 'dinner' | 'snacks'>('breakfast');
   const [ingredientInput, setIngredientInput] = useState('');
+
+  // Initialize weekPlan from context
+  useEffect(() => {
+    if (contextWeekPlan && Object.keys(contextWeekPlan).length > 0) {
+      setWeekPlan(contextWeekPlan);
+    }
+  }, []);
+
+  // Sync weekPlan to context whenever it changes
+  useEffect(() => {
+    if (Object.keys(weekPlan).length > 0) {
+      setContextWeekPlan(weekPlan);
+    }
+  }, [weekPlan]);
 
   const addIngredient = () => {
     if (ingredientInput.trim() && newMeal.ingredients) {
@@ -122,6 +136,31 @@ const MyPlan = () => {
     });
   };
 
+  const addAiMealToDay = (aiMeal: any, day: string, mealType: 'breakfast' | 'lunch' | 'dinner') => {
+    const meal: Meal = {
+      id: Date.now().toString(),
+      name: aiMeal.name,
+      ingredients: aiMeal.ingredients || [],
+      calories: aiMeal.calories,
+      carbs: aiMeal.carbs,
+      protein: aiMeal.protein,
+      notes: aiMeal.description
+    };
+
+    const dayPlan = weekPlan[day] || {};
+    dayPlan[mealType] = meal;
+
+    setWeekPlan({
+      ...weekPlan,
+      [day]: dayPlan
+    });
+
+    toast({
+      title: "Meal added!",
+      description: `${meal.name} has been added to ${day}'s ${mealType}.`
+    });
+  };
+
   const currentDayPlan = weekPlan[activeDay] || {};
 
   return (
@@ -150,18 +189,49 @@ const MyPlan = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Sparkles className="h-5 w-5 text-primary" />
-                Today's AI-Generated Recommendations
+                AI-Generated Recommendations
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {dailyPlan.map((meal, index) => (
-                  <div key={index} className="p-4 bg-primary/5 border border-primary/20 rounded-lg">
-                    <h3 className="font-medium mb-2">{meal.name}</h3>
-                    <p className="text-sm text-muted-foreground mb-3">{meal.description}</p>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-primary font-medium">{meal.calories} cal</span>
-                      <Badge variant="secondary">{meal.culture}</Badge>
+                  <div key={index} className="p-4 bg-primary/5 border border-primary/20 rounded-lg space-y-3">
+                    <div>
+                      <h3 className="font-medium mb-2">{meal.name}</h3>
+                      <p className="text-sm text-muted-foreground mb-3">{meal.description}</p>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-primary font-medium">{meal.calories} cal</span>
+                        <Badge variant="secondary">{meal.culture}</Badge>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <p className="text-xs text-muted-foreground mb-1">Add to {activeDay}:</p>
+                      <div className="flex gap-1">
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="flex-1 text-xs"
+                          onClick={() => addAiMealToDay(meal, activeDay, 'breakfast')}
+                        >
+                          Breakfast
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="flex-1 text-xs"
+                          onClick={() => addAiMealToDay(meal, activeDay, 'lunch')}
+                        >
+                          Lunch
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="flex-1 text-xs"
+                          onClick={() => addAiMealToDay(meal, activeDay, 'dinner')}
+                        >
+                          Dinner
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 ))}

@@ -17,7 +17,8 @@ import {
   Search,
   Menu,
   LogOut,
-  X
+  X,
+  CalendarDays
 } from "lucide-react";
 
 interface NavbarProps {
@@ -33,10 +34,19 @@ const Navbar = ({ activeTab = "dashboard", onTabChange }: NavbarProps) => {
   
   const tabs = [
     { id: "dashboard", label: "Dashboard", icon: Activity },
+    { id: "plan", label: "My Plan", icon: CalendarDays },
     { id: "meals", label: "Meals", icon: ChefHat },
     { id: "community", label: "Community", icon: Users },
     { id: "profile", label: "Profile", icon: Settings },
   ];
+
+  const handleTabClick = (tabId: string) => {
+    if (tabId === "plan") {
+      navigate('/my-plan');
+    } else {
+      onTabChange?.(tabId);
+    }
+  };
 
   const handleSignOut = () => {
     signOut();
@@ -99,7 +109,7 @@ const Navbar = ({ activeTab = "dashboard", onTabChange }: NavbarProps) => {
                   key={tab.id}
                   variant={isActive ? "secondary" : "ghost"}
                   size="sm"
-                  onClick={() => onTabChange?.(tab.id)}
+                  onClick={() => handleTabClick(tab.id)}
                   className={`flex items-center space-x-2 ${
                     isActive ? "bg-white/20 text-white hover:bg-white/30" : "text-white/80 hover:text-white hover:bg-white/10"
                   }`}
@@ -179,7 +189,7 @@ const Navbar = ({ activeTab = "dashboard", onTabChange }: NavbarProps) => {
                   key={tab.id}
                   variant={isActive ? "secondary" : "ghost"}
                   size="sm"
-                  onClick={() => onTabChange?.(tab.id)}
+                  onClick={() => handleTabClick(tab.id)}
                   className={`flex items-center space-x-2 whitespace-nowrap ${
                     isActive ? "bg-white/20 text-white hover:bg-white/30" : "text-white/80 hover:text-white hover:bg-white/10"
                   }`}
