@@ -15,7 +15,7 @@ import heroImage from "@/assets/nutrexa-hero.jpg";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Activity, Users, Trophy, Heart, ArrowLeft, Calendar, Loader2, Sparkles, Shield, ChefHat, Zap } from "lucide-react";
+import { Activity, Users, Trophy, Heart, ArrowLeft, Calendar, Loader2, Sparkles, Shield, ChefHat, Zap, Smile, ChevronRight } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { notifications } from "@/lib/notifications";
@@ -125,18 +125,20 @@ const Index = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Mood check-in prompt
+  // Mood check-in prompt - auto-trigger if not logged today
   useEffect(() => {
+    if (!user) return;
+    
     const today = new Date().toDateString();
     const lastMoodDate = user?.profile?.moodHistory?.[0]?.date;
     const hasLoggedToday = lastMoodDate && new Date(lastMoodDate).toDateString() === today;
     
-    if (!hasLoggedToday && user?.profile) {
-      // Show dialog after 5 seconds
-      const timer = setTimeout(() => setIsMoodCheckInOpen(true), 5000);
+    if (!hasLoggedToday) {
+      // Show dialog after 2 seconds
+      const timer = setTimeout(() => setIsMoodCheckInOpen(true), 2000);
       return () => clearTimeout(timer);
     }
-  }, [user]);
+  }, [user?.id]);
 
   const handleMoodSelect = (mood: 'happy' | 'okay' | 'neutral' | 'worried' | 'angry') => {
     if (!user?.profile) return;
@@ -367,6 +369,18 @@ const Index = () => {
                     <CardTitle className="text-lg">Quick Actions</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
+                    <Card className="p-4 hover:shadow-lg transition-shadow cursor-pointer border-2" onClick={() => setIsMoodCheckInOpen(true)}>
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-purple-100 dark:bg-purple-900 rounded-lg">
+                          <Smile className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-sm">Daily Mood Check</h3>
+                          <p className="text-xs text-muted-foreground">How are you feeling?</p>
+                        </div>
+                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                      </div>
+                    </Card>
                     <Button variant="outline" className="w-full justify-start" onClick={() => setIsCgmModalOpen(true)}>
                       <Activity className="h-4 w-4 mr-2" />
                       Connect CGM Device
