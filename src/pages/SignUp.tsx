@@ -29,7 +29,7 @@ type SignUpForm = z.infer<typeof signUpSchema>;
 
 const SignUp = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { signUp, isAuthenticated } = useAuth();
+  const { signUp, isAuthenticated, user } = useAuth();
   const { toast } = useToast();
 
   const form = useForm<SignUpForm>({
@@ -45,7 +45,12 @@ const SignUp = () => {
 
   // Redirect if already authenticated
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
+    const dashboardPath = user?.role === 'specialist' 
+      ? '/dashboard/specialist'
+      : user?.role === 'meal-creator'
+      ? '/dashboard/meal-creator'
+      : '/dashboard';
+    return <Navigate to={dashboardPath} replace />;
   }
 
   const onSubmit = async (data: SignUpForm) => {

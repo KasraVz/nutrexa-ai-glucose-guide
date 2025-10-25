@@ -13,6 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Activity, Users, Trophy, Heart, ArrowLeft, Calendar, Loader2, Sparkles, Shield, ChefHat } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 import { notifications } from "@/lib/notifications";
 import { Link } from "react-router-dom";
 
@@ -105,6 +106,7 @@ const Index = () => {
   const [aiPlan, setAiPlan] = useState<typeof allMeals | null>(null);
   const [isCgmModalOpen, setIsCgmModalOpen] = useState(false);
   const { user, setDailyPlan } = useAuth();
+  const { toast } = useToast();
   const navigate = useNavigate();
   
   // Demo notification on mount
@@ -200,6 +202,39 @@ const Index = () => {
 
             {/* Quick Stats */}
             <QuickStats />
+
+            {/* Patient ID Card */}
+            <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10">
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Shield className="h-5 w-5 text-primary" />
+                  Your Patient ID
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Share this ID with your healthcare specialist to allow them to monitor your glucose levels
+                </p>
+                <div className="flex items-center gap-2">
+                  <code className="flex-1 px-3 py-2 bg-background rounded-md border font-mono text-sm">
+                    {user?.id}
+                  </code>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      navigator.clipboard.writeText(user?.id || '');
+                      toast({
+                        title: "Copied!",
+                        description: "Patient ID copied to clipboard",
+                      });
+                    }}
+                  >
+                    Copy
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Today's AI-Generated Plan */}
             {aiPlan && (
