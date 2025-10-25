@@ -5,7 +5,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
-import PatientDashboard from "./pages/PatientDashboard";
+import PatientDashboard from "./pages/patient/PatientDashboard";
+import Trends from "./pages/patient/Trends";
+import Reminders from "./pages/patient/Reminders";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import OnboardingMultiStep from "./pages/OnboardingMultiStep";
@@ -59,6 +61,16 @@ const App = () => (
             <Route path="/dashboard" element={
               <ProtectedRoute allowedRoles={['patient']}>
                 <PatientDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/trends" element={
+              <ProtectedRoute allowedRoles={['patient']}>
+                <Trends />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/reminders" element={
+              <ProtectedRoute allowedRoles={['patient']}>
+                <Reminders />
               </ProtectedRoute>
             } />
             <Route path="/dashboard/specialist/*" element={

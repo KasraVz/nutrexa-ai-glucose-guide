@@ -56,6 +56,16 @@ export interface CreatedMeal {
   usageCount: number;
 }
 
+export interface MedicationReminder {
+  id: string;
+  medicationName: string;
+  dosage: string;
+  times: string[];
+  days: string[];
+  notes?: string;
+  enabled: boolean;
+}
+
 export interface UserProfile {
   age: number;
   weight: number;
@@ -68,6 +78,9 @@ export interface UserProfile {
   culturalPreferences: string[];
   medications: string[];
   isPublic: boolean;
+  primaryGoal?: string;
+  jobSchedule?: string;
+  medicationReminders?: MedicationReminder[];
 }
 
 interface AuthContextType {
@@ -90,6 +103,10 @@ interface AuthContextType {
   creatorMeals: CreatedMeal[];
   addMealToMarketplace: (mealData: Omit<CreatedMeal, 'id' | 'usageCount'>) => Promise<void>;
   earnings: { total: number; pending: number; thisMonth: number; lastPayoutDate: string };
+  addMedicationReminder: (reminder: Omit<MedicationReminder, 'id'>) => void;
+  updateMedicationReminder: (id: string, reminder: Partial<MedicationReminder>) => void;
+  deleteMedicationReminder: (id: string) => void;
+  simulateGlucoseImpact: (carbs: number) => { prediction: string; peak: string; rise: string };
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -253,6 +270,54 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setCreatorMeals([...creatorMeals, newMeal]);
   };
 
+  const addMedicationReminder = (reminder: Omit<MedicationReminder, 'id'>) => {
+    const newReminder: MedicationReminder = {
+      ...reminder,
+      id: crypto.randomUUID(),
+    };
+    setUser(prev => prev ? {
+      ...prev,
+      profile: {
+        ...prev.profile!,
+        medicationReminders: [...(prev.profile?.medicationReminders || []), newReminder],
+      }
+    } : null);
+  };
+
+  const updateMedicationReminder = (id: string, reminder: Partial<MedicationReminder>) => {
+    setUser(prev => prev ? {
+      ...prev,
+      profile: {
+        ...prev.profile!,
+        medicationReminders: prev.profile?.medicationReminders?.map(r =>
+          r.id === id ? { ...r, ...reminder } : r
+        ),
+      }
+    } : null);
+  };
+
+  const deleteMedicationReminder = (id: string) => {
+    setUser(prev => prev ? {
+      ...prev,
+      profile: {
+        ...prev.profile!,
+        medicationReminders: prev.profile?.medicationReminders?.filter(r => r.id !== id),
+      }
+    } : null);
+  };
+
+  const simulateGlucoseImpact = (carbs: number) => {
+    const baseRise = carbs * 3; // Rough estimate: 1g carb raises glucose by ~3 mg/dL
+    const minRise = Math.round(baseRise * 0.7);
+    const maxRise = Math.round(baseRise * 1.3);
+    
+    return {
+      prediction: `Based on ${carbs}g carbs, expect glucose rise of ${minRise}-${maxRise} mg/dL`,
+      peak: '60-90 minutes',
+      rise: `${minRise}-${maxRise} mg/dL`,
+    };
+  };
+
   const value: AuthContextType = {
     user,
     isAuthenticated: !!user,
@@ -273,6 +338,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     creatorMeals,
     addMealToMarketplace,
     earnings,
+    addMedicationReminder,
+    updateMedicationReminder,
+    deleteMedicationReminder,
+    simulateGlucoseImpact,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

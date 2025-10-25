@@ -105,6 +105,8 @@ const Index = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [aiPlan, setAiPlan] = useState<typeof allMeals | null>(null);
   const [isCgmModalOpen, setIsCgmModalOpen] = useState(false);
+  const [isQuickLogOpen, setIsQuickLogOpen] = useState(false);
+  const [isSupportChatOpen, setIsSupportChatOpen] = useState(false);
   const { user, setDailyPlan } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -202,6 +204,19 @@ const Index = () => {
 
             {/* Quick Stats */}
             <QuickStats />
+
+            {/* Smart Suggestions */}
+            <SmartSuggestions userProfile={user?.profile} currentGlucose={95} />
+
+            {/* Quick Action Button */}
+            <Button 
+              onClick={() => setIsQuickLogOpen(true)}
+              className="w-full"
+              size="lg"
+            >
+              <Zap className="mr-2 h-5 w-5" />
+              Quick Log / Simulate Meal
+            </Button>
 
             {/* Patient ID Card */}
             <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10">
