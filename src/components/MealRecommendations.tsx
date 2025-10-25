@@ -127,10 +127,13 @@ const MealRecommendations = ({ className = "", meals }: MealRecommendationsProps
   return (
     <div className={className}>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-semibold text-foreground flex items-center gap-2">
-          <ChefHat className="h-6 w-6 text-primary" />
-          Recommended for You
-        </h2>
+        <div>
+          <h2 className="text-2xl font-semibold text-foreground flex items-center gap-2">
+            <ChefHat className="h-6 w-6 text-primary" />
+            Curated Recommendations
+          </h2>
+          <p className="text-sm text-muted-foreground mt-1">Handpicked by our nutritionists</p>
+        </div>
         <Button variant="outline" size="sm">
           View All
         </Button>

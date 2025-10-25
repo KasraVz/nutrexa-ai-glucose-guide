@@ -129,22 +129,37 @@ const Index = () => {
     // Simulate AI processing
     setTimeout(() => {
       // Mock current glucose level - in real app, get from GlucoseChart component
-      const currentGlucose = 120; // Example glucose level
+      const currentGlucose = 95; // Example glucose level
       
-      let preferredMeals;
+      // Get user preferences from profile
+      const userCultures = user?.profile?.culturalPreferences || [];
+      const userAllergies = user?.profile?.allergies || [];
+      
+      let preferredMeals = allMeals;
+      
+      // Filter by cultural preferences if available
+      if (userCultures.length > 0) {
+        const culturalMatches = allMeals.filter(meal => 
+          userCultures.some(culture => 
+            meal.culture.toLowerCase().includes(culture.toLowerCase())
+          )
+        );
+        if (culturalMatches.length >= 3) {
+          preferredMeals = culturalMatches;
+        }
+      }
+      
+      // Filter by glucose level
       if (currentGlucose > 140) {
         // High glucose - prioritize very low and low impact meals
-        preferredMeals = allMeals.filter(meal => 
+        preferredMeals = preferredMeals.filter(meal => 
           meal.glucoseImpact === 'very low' || meal.glucoseImpact === 'low'
         );
       } else if (currentGlucose > 100) {
         // Elevated - mix of low and very low impact
-        preferredMeals = allMeals.filter(meal => 
+        preferredMeals = preferredMeals.filter(meal => 
           meal.glucoseImpact === 'very low' || meal.glucoseImpact === 'low'
         );
-      } else {
-        // Normal - can include moderate impact
-        preferredMeals = allMeals;
       }
       
       // Select 3-4 random meals from preferred list
@@ -156,7 +171,11 @@ const Index = () => {
       setDailyPlan(selected);
       setIsGenerating(false);
       
-      notifications.achievement('AI Plan Generated!', 'Your personalized meal plan is ready based on your current glucose levels.');
+      const message = userCultures.length > 0
+        ? `Based on your ${userCultures.join(', ')} cuisine preferences and current glucose of ${currentGlucose} mg/dL`
+        : `Based on your current glucose of ${currentGlucose} mg/dL`;
+      
+      notifications.achievement('AI Plan Generated!', message);
     }, 2000);
   };
 
@@ -331,25 +350,6 @@ const Index = () => {
           </div>
         );
       
-      case "meals":
-        return (
-          <div className="space-y-6">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                onClick={() => setActiveTab("dashboard")}
-                className="flex items-center gap-2"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Back to Dashboard
-              </Button>
-            </div>
-            <h2 className="text-2xl font-bold text-foreground">Meal Planning</h2>
-            <MealRecommendations />
-            <FoodLogger />
-          </div>
-        );
-        
       case "community":
         return (
           <div className="space-y-6">
@@ -438,6 +438,18 @@ const Index = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Quick Log Dialog */}
+      <QuickLogDialog 
+        open={isQuickLogOpen} 
+        onOpenChange={setIsQuickLogOpen} 
+      />
+
+      {/* Support Chat */}
+      <SupportChat 
+        open={isSupportChatOpen} 
+        onOpenChange={setIsSupportChatOpen} 
+      />
     </div>
   );
 };

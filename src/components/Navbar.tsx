@@ -35,7 +35,6 @@ const Navbar = ({ activeTab = "dashboard", onTabChange }: NavbarProps) => {
   const tabs = [
     { id: "dashboard", label: "Dashboard", icon: Activity },
     { id: "plan", label: "My Plan", icon: CalendarDays },
-    { id: "meals", label: "Meals", icon: ChefHat },
     { id: "community", label: "Community", icon: Users },
     { id: "profile", label: "Profile", icon: Settings },
   ];
@@ -63,8 +62,8 @@ const Navbar = ({ activeTab = "dashboard", onTabChange }: NavbarProps) => {
 
   const performSearch = () => {
     if (searchQuery.trim()) {
-      // For now, navigate to meals page with search context
-      onTabChange?.('meals');
+      // For now, navigate to dashboard with search context
+      onTabChange?.('dashboard');
       setIsSearchOpen(false);
       setSearchQuery("");
     }
@@ -247,7 +246,7 @@ const Navbar = ({ activeTab = "dashboard", onTabChange }: NavbarProps) => {
                         className="w-full text-left p-2 rounded-md hover:bg-muted flex items-center gap-2"
                         onClick={() => {
                           if (result.type === 'meal') {
-                            onTabChange?.('meals');
+                            onTabChange?.('dashboard');
                           } else if (result.name === 'My Plan') {
                             navigate('/my-plan');
                           } else {
